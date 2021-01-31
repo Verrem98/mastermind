@@ -1,9 +1,20 @@
 import random
+import time
+from itertools import product
 
-board = []
-options = ['A','B','C','D','E','F','G','H']
+
+user_picks = []
+options = ['A','B','C','D','E','F']
+options_string = 'ABCDEF'
 code = []
 results = []
+possible_combinations = []
+
+
+for i in product(options_string, repeat=4):
+    possible_combinations.append(list(i))
+
+possible_combinations_copy = possible_combinations.copy()
 
 def generate_code():
     for x in range(4):
@@ -57,8 +68,8 @@ def print_board():
             print('-', end = '')
         print('')
 
-    for i in range(len(board),0,-1):
-        for x in board[i-1]:
+    for i in range(len(user_picks), 0, -1):
+        for x in user_picks[i - 1]:
             print(x, end = '')
         print(results[i-1], end='')
 
@@ -68,6 +79,7 @@ def check_for_end():
     'kijkt of de eindconditie bereikt is'
 
     if([4,0] in results):
+        print_board()
         print("You've guessed the code!")
         print(f"The code was: {code}")
         return False
@@ -86,9 +98,108 @@ def player_vs_computer():
     while(check_for_end()):
         print_board()
         picks = player_turn()
-        board.append(picks)
+        user_picks.append(picks)
         results.append(check_placement(picks))
 
+#--------------------------------------------------------------------------------------------------------------
+
+def computer_turn_random():
+    picks = []
+    for x in range(4):
+        rand = random.randint(0, len(options) - 1)
+        picks.append(options[rand])
+    return picks
 
 
-player_vs_computer()
+def computer_turn_simple(round_number):
+    global possible_combinations_copy
+
+    if(round_number==1):
+        rand = random.randint(0, len(possible_combinations_copy) - 1)
+        first_pick = possible_combinations[rand]
+        possible_combinations_copy.remove(first_pick)
+
+        return first_pick
+
+    else:
+        previous_result = results[round_number-2]
+        previous_user_pick = user_picks[round_number-2]
+
+
+        # als geen van de gegokte getallen voorkomen in de code delete dat x/6e van de opties
+        if(previous_result[1] == 0 and previous_result[0] == 0):
+            for x in set(previous_user_pick):
+                for i in possible_combinations:
+                    if x in i:
+                        try:
+                            possible_combinations_copy.remove(i)
+                        except ValueError:
+                            pass
+        #als alle letters hetzelfde zijn en er komt er tenminste één van voor in de code, delete dan alle opties zonder die letter
+        if(len(set(previous_user_pick))==1):
+            if(previous_result[0]>=1):
+                for i in possible_combinations:
+                    if(previous_user_pick[0] not in i):
+                        try:
+                            possible_combinations_copy.remove(i)
+                        except ValueError:
+                            pass
+
+        #als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
+        if(previous_result[0] + previous_result[1] == 4):
+            temp_list = []
+            for i in range(0, len(possible_combinations_copy)):
+                count = 0
+                for x in previous_user_pick:
+                    if (previous_user_pick.count(x) == possible_combinations_copy[i].count(x)):
+                        count += 1
+                if count == 4:
+                    temp_list.append(possible_combinations_copy[i])
+
+            possible_combinations_copy = temp_list
+
+
+        rand = random.randint(0, len(possible_combinations_copy) - 1)
+        guess = possible_combinations_copy[rand]
+        possible_combinations_copy.remove(guess)
+
+        return guess
+
+
+def computer_vs_computer():
+    generate_code()
+    round_number = 0
+    while (check_for_end()):
+        round_number += 1
+        print_board()
+        print()
+        picks = computer_turn_simple(round_number)
+        user_picks.append(picks)
+        results.append(check_placement(picks))
+        time.sleep(0.2)
+
+
+
+computer_vs_computer()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
