@@ -1,24 +1,35 @@
+import random
+
 board = []
 options = ['A','B','C','D','E','F','G','H']
-code = ['A','A','B','C']
+code = []
 results = []
 
-def player_turn():
-    picks = []
+def generate_code():
     for x in range(4):
-        while(True):
-            pick = input().capitalize()
-            if(pick in options):
-                picks.append(pick)
+        rand = random.randint(0, len(options)-1)
+        code.append(options[rand])
+
+def player_turn():
+    while(True):
+            pick = input().upper()
+
+            picks = (list(pick))
+            pick_count = 0
+            for pick in picks:
+                if pick in options:
+                    pick_count+=1
+            if pick_count == 4:
                 break
             else:
-                print('please enter one of A,B,C,D,E,F,G,H')
+                print(f'Please enter 4 of the following in a row: {options}')
+
     return picks
 
 def check_placement(picks):
     'kijkt welke user picks correct zijn, geeft het terug in een list in het format: [goede_letter_goede_postie,goede_letter]'
 
-    perfect_placement = [] # de index van de correcte letters op de correcte plaats
+    perfect_placement = [] # de index van de correcte letters op de correcte plaats, heb index nodig voor een list.pop later
     good_placement = [] # de correcte overige letters op de verkeerde plaats, geen index nodig
     picks_copy = picks.copy()
     code_copy = code.copy()
@@ -40,6 +51,7 @@ def check_placement(picks):
     return result
 
 def print_board():
+    'print hoeveel pogingen je nog hebt en je gokgeschiedenis'
     for i in range(10-len(results)):
         for x in range(4):
             print('-', end = '')
@@ -52,7 +64,8 @@ def print_board():
 
         print('')
 
-def check_for_win():
+def check_for_end():
+    'kijkt of de eindconditie bereikt is'
 
     if([4,0] in results):
         print("You've guessed the code!")
@@ -61,19 +74,21 @@ def check_for_win():
     elif(len(results)==10):
         print_board()
         print("You've lost!")
+        print(f"The code was: {code}")
         return False
     else:
         return True
 
 
-while(check_for_win()):
-    print_board()
-    picks = player_turn()
-    board.append(picks)
-    results.append(check_placement(picks))
+def player_vs_computer():
+    'gameplayloop voor speler tegen computer'
+    generate_code()
+    while(check_for_end()):
+        print_board()
+        picks = player_turn()
+        board.append(picks)
+        results.append(check_placement(picks))
 
 
 
-
-
-
+player_vs_computer()
