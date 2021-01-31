@@ -1,6 +1,6 @@
 board = []
 options = ['A','B','C','D','E','F','G','H']
-code = ['A','C','A','H']
+code = ['A','A','B','C']
 results = []
 
 def turn():
@@ -19,8 +19,8 @@ def turn():
 
 def check_placement(picks):
 
-    perfect_placement = []
-    good_placement = []
+    perfect_placement = [] # de index van de correcte letters op de correcte plaats
+    good_placement = [] # de correcte overige letters op de verkeerde plaats, geen index nodig
     picks_copy = picks.copy()
     code_copy = code.copy()
 
@@ -33,8 +33,12 @@ def check_placement(picks):
         picks_copy.pop(perfect_placement[x]-x)
         code_copy.pop(perfect_placement[x]-x)
 
-    print(picks_copy,code_copy)
-    print(f'{len(perfect_placement)} correct letters were places in the right spot\n{len(good_placement)} correcct letters were places in the wrong spot')
+    for pick in picks_copy:
+        if(pick in code_copy):
+            good_placement.append(pick)
+            code_copy.remove(pick)
+
+    print(f'{len(perfect_placement)} correct letters were places in the right spot\n{len(good_placement)} correct letters were places in the wrong spot')
 
     result = [len(perfect_placement),len(good_placement)]
     return result
