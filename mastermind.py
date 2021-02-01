@@ -243,7 +243,7 @@ def computer_turn_simple(round_number):
                 temp_list.append(i)
             possible_combinations_copy = temp_list
 
-
+        #dit werkt 0,3 average guesses beter dan altijd het 1e element selecteren
         rand = random.randint(0, len(possible_combinations_copy) - 1)
         guess = possible_combinations_copy[rand]
         possible_combinations_copy.remove(guess)                      
@@ -285,6 +285,7 @@ def reset():
     code = []
 
 def reset_rounds():
+    'resets the list that tracks the rounds'
     global rounds
     rounds = []
 
