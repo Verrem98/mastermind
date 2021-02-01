@@ -78,16 +78,18 @@ def print_board():
             print(x, end = '')
         print(results[i-1], end='')
 
+
         print('')
 
-def check_for_end(round_number):
+def check_for_end(round_number,prints):
     'kijkt of de eindconditie bereikt is'
 
     if([4,0] in results):
-        print_board()
-        print(f"round: {round_number}")
-        print("You've guessed the code!")
-        print(f"The code was: {code}")
+        if(prints):
+            print_board()
+            print(f"round: {round_number}")
+            print("You've guessed the code!")
+            print(f"The code was: {code}")
         rounds.append(round_number)
         return False
     elif(len(results)==1000):
@@ -189,19 +191,6 @@ def computer_turn_simple(round_number):
             possible_combinations_copy = temp_list
 
 
-
-        #als alle letters hetzelfde zijn en er komt er tenminste één van voor in de code, delete dan alle opties zonder die letter
-        #if(len(set(previous_user_pick))==1):
-            #if(previous_result[0]>=1):
-                #for i in possible_combinations_copy:
-                    #if(previous_user_pick[0] not in i):
-                        #try:
-                            #possible_combinations_copy.remove(i)
-                        #except ValueError:
-                           #pass
-
-
-
         #als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
         if(previous_result[0] + previous_result[1] == 4):
             temp_list = []
@@ -216,8 +205,6 @@ def computer_turn_simple(round_number):
             possible_combinations_copy = temp_list
 
 
-        print(possible_combinations_copy)
-        print(len(possible_combinations_copy))
         rand = random.randint(0, len(possible_combinations_copy) - 1)
         guess = possible_combinations_copy[rand]
         possible_combinations_copy.remove(guess)
@@ -225,14 +212,16 @@ def computer_turn_simple(round_number):
 
         return guess
 
-def computer_vs_computer():
+def computer_vs_computer(prints):
+    'computer vs computer gamemode, prints is boolean en print het spel wel of niet in de console'
 
     generate_code()
     round_number = 0
-    while (check_for_end(round_number)):
+    while (check_for_end(round_number,prints)):
         round_number += 1
-        print_board()
-        print()
+        if(prints):
+            print_board()
+            print()
         picks = computer_turn_simple(round_number)
         user_picks.append(picks)
         results.append(check_placement(picks))
@@ -240,6 +229,7 @@ def computer_vs_computer():
     reset()
 
 def reset():
+    'gebruik kan classes/constructor dus moet mijn lists resetten'
     global code
     global user_picks
     global results
@@ -252,24 +242,17 @@ def reset():
 
 
 
-def get_avg():
-    for x in range(1000):
-        computer_vs_computer()
+def get_avg(limit):
+    'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel'
+    for x in range(limit):
+        print(f'{x}/{limit}')
+        computer_vs_computer(False)
 
-    print(f'avg rounds: {sum(rounds)/1000}')
-
-get_avg()
-
-
+    print(f'avg rounds: {sum(rounds)/limit}')
 
 
-
-
-
-
-
-
-
+computer_vs_computer(True)
+get_avg(1000)
 
 
 
