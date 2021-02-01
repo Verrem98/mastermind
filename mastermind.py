@@ -161,15 +161,45 @@ def computer_turn_simple(round_number):
 
 
 
+        #[x,y] x+y = z, split de 4 gokken van de speler in een lijst van lijsten z groot, delete alle opties waar niet tenminste 1 sublijst in voorkomt
+        carry_over = previous_result[0]+previous_result[1]
+        if(4>carry_over > 0):
+            temp_list = []
+            previous_user_pick_string = ''
+            for x in previous_user_pick:
+                previous_user_pick_string += x
+
+            sub_possible_combinations = []
+            for i in itertools.combinations(previous_user_pick_string, previous_result[0]+previous_result[1]):
+               sub_possible_combinations.append(list(i))
+
+
+            for i in possible_combinations_copy:
+                count = 0
+                for x in sub_possible_combinations:
+                    count2 = 0
+                    for j in x:
+                        if j in i:
+                            count2 += 1
+                    if(count2 == len(x)):
+                        count += 1
+                if(count > 0):
+                    temp_list.append(i)
+
+            possible_combinations_copy = temp_list
+
+
+
         #als alle letters hetzelfde zijn en er komt er tenminste één van voor in de code, delete dan alle opties zonder die letter
-        if(len(set(previous_user_pick))==1):
-            if(previous_result[0]>=1):
-                for i in possible_combinations:
-                    if(previous_user_pick[0] not in i):
-                        try:
-                            possible_combinations_copy.remove(i)
-                        except ValueError:
-                            pass
+        #if(len(set(previous_user_pick))==1):
+            #if(previous_result[0]>=1):
+                #for i in possible_combinations_copy:
+                    #if(previous_user_pick[0] not in i):
+                        #try:
+                            #possible_combinations_copy.remove(i)
+                        #except ValueError:
+                           #pass
+
 
 
         #als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
@@ -185,6 +215,9 @@ def computer_turn_simple(round_number):
 
             possible_combinations_copy = temp_list
 
+
+        print(possible_combinations_copy)
+        print(len(possible_combinations_copy))
         rand = random.randint(0, len(possible_combinations_copy) - 1)
         guess = possible_combinations_copy[rand]
         possible_combinations_copy.remove(guess)
@@ -219,8 +252,13 @@ def reset():
 
 
 
+def get_avg():
+    for x in range(1000):
+        computer_vs_computer()
 
-computer_vs_computer()
+    print(f'avg rounds: {sum(rounds)/1000}')
+
+get_avg()
 
 
 
