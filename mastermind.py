@@ -40,7 +40,7 @@ def player_turn():
 
     return picks
 
-def check_placement(picks):
+def check_placement(picks,code):
     'kijkt welke user picks correct zijn, geeft het terug in een list in het format: [goede_letter_goede_postie,goede_letter]'
 
     perfect_placement = [] # de index van de correcte letters op de correcte plaats, heb index nodig voor een list.pop later
@@ -114,19 +114,11 @@ def player_vs_computer():
         print_board()
         picks = player_turn()
         user_picks.append(picks)
-        results.append(check_placement(picks))
+        results.append(check_placement(picks,code))
 
 #--------------------------------------------------------------------------------------------------------------
 
-def computer_turn_random():
-    picks = []
-    for x in range(4):
-        rand = random.randint(0, len(options) - 1)
-        picks.append(options[rand])
-    return picks
-
-
-def computer_turn_simple(round_number):
+def computer_turn_heuristic(round_number):
     'loop door meerdere loops heen om te kijken of specifieke condities gelden, zo ja, gooi dan een deel van de mogelijke gokken (we starten met 1296) weg zodat de kans op een goede gok hoger wordt'
     global possible_combinations_copy
 
@@ -236,7 +228,32 @@ def computer_turn_simple(round_number):
 
         return guess
 
-def computer_vs_computer(prints):
+
+
+def computer_turn_simple(round_number):
+    'gebaseerd op het Five-guess algorithm van Donal Knuth'
+    global possible_combinations_copy
+
+    if(round_number==1):
+        return ['A','A','B','B']
+    else:
+        previous_result = results[round_number-2]
+        previous_user_pick = user_picks[round_number-2]
+
+        temp_list = []
+        for i in possible_combinations_copy:
+            if(check_placement(i,previous_user_pick))==previous_result:
+                temp_list.append(i)
+            possible_combinations_copy = temp_list
+
+
+        rand = random.randint(0, len(possible_combinations_copy) - 1)
+        guess = possible_combinations_copy[rand]
+        possible_combinations_copy.remove(guess)                      
+
+        return guess
+
+def computer_vs_computer(prints,mode):
     'computer vs computer gamemode, prints is boolean en print het spel wel of niet in de console'
 
     generate_code()
@@ -246,9 +263,13 @@ def computer_vs_computer(prints):
         if(prints):
             print_board()
             print()
-        picks = computer_turn_simple(round_number)
+
+        if(mode == 'heuristic'):
+            picks = computer_turn_heuristic(round_number)
+        if(mode == 'simple'):
+            picks = computer_turn_simple(round_number)
         user_picks.append(picks)
-        results.append(check_placement(picks))
+        results.append(check_placement(picks,code))
         time.sleep(0)
     reset()
 
@@ -266,28 +287,37 @@ def reset():
     possible_combinations_copy = possible_combinations.copy()
     code = []
 
+def reset_rounds():
+    global rounds
+    rounds = []
 
 
-def get_avg(limit):
+
+def get_avg(limit,mode):
     'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel'
+    reset()
     for x in range(limit):
-        print(f'{x}/{limit}')
-        computer_vs_computer(False)
+        computer_vs_computer(False,mode)
 
-    print(f'avg rounds before win: {sum(rounds)/limit}')
+    print(f'avg rounds before win: {sum(rounds)/limit} {mode}')
+    reset_rounds()
+
 
 
 
 #-----------------------------------------------------------------------------------------------------------------------
 
+
 #bereken in hoeveel rondes de computer gemiddeld wint
-#get_avg(10000)
+get_avg(500,'simple')
+get_avg(500,'heuristic')
 
 #speel tegen de computer
 #player_vs_computer()
 
 #computer speelt tegen de computer
-computer_vs_computer(True)
+#computer_vs_computer(True,'simple')
+#computer_vs_computer(True,'heuristic')
 
 
 
