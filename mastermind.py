@@ -85,9 +85,9 @@ def check_for_end(round_number):
 
     if([4,0] in results):
         print_board()
+        print(f"round: {round_number}")
         print("You've guessed the code!")
         print(f"The code was: {code}")
-        print(f"round: {round_number}")
         rounds.append(round_number)
         return False
     elif(len(results)==1000):
@@ -221,14 +221,7 @@ def reset():
 
 
 
-
-
-
-for x in range(10000):
-    computer_vs_computer()
-
-print(sum(rounds)/10000)
-
+computer_vs_computer()
 
 
 
