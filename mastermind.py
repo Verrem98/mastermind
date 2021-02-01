@@ -150,15 +150,14 @@ def computer_turn_simple(round_number):
 
         temp_list = []
         # als de feedback [0,x] is dan betekent dat dat je voor elke letter zeker weet dat ze niet in de huidige postie horen, ik elimneer hier die opties
-        if (previous_result[0] == 0):
-            for i in possible_combinations_copy:
-                counter = 0
-                for x in range(len(previous_user_pick)):
-                    if (previous_user_pick[x] != i[x]):
-                        counter += 1
-                if counter == 4:
-                    temp_list.append(i)
-            possible_combinations_copy = temp_list
+        for i in possible_combinations_copy:
+            counter = 0
+            for x in range(len(previous_user_pick)):
+                if (previous_user_pick[x] != i[x]):
+                    counter += 1
+            if counter == (4-previous_result[0]):
+                temp_list.append(i)
+        possible_combinations_copy = temp_list
 
 
 
@@ -206,6 +205,7 @@ def computer_vs_computer():
         user_picks.append(picks)
         results.append(check_placement(picks))
         time.sleep(0)
+    reset()
 
 def reset():
     global code
@@ -224,8 +224,10 @@ def reset():
 
 
 
+for x in range(10000):
+    computer_vs_computer()
 
-computer_vs_computer()
+print(sum(rounds)/10000)
 
 
 
