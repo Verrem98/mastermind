@@ -1,6 +1,8 @@
 import random
 import time
+import itertools
 from itertools import product
+
 
 
 user_picks = []
@@ -9,6 +11,7 @@ options_string = 'ABCDEF'
 code = []
 results = []
 possible_combinations = []
+rounds = []
 
 
 for i in product(options_string, repeat=4):
@@ -17,6 +20,8 @@ for i in product(options_string, repeat=4):
 possible_combinations_copy = possible_combinations.copy()
 
 def generate_code():
+
+
     for x in range(4):
         rand = random.randint(0, len(options)-1)
         code.append(options[rand])
@@ -75,21 +80,28 @@ def print_board():
 
         print('')
 
-def check_for_end():
+def check_for_end(round_number):
     'kijkt of de eindconditie bereikt is'
 
     if([4,0] in results):
         print_board()
         print("You've guessed the code!")
         print(f"The code was: {code}")
+        print(f"round: {round_number}")
+        rounds.append(round_number)
         return False
-    elif(len(results)==10):
+    elif(len(results)==1000):
         print_board()
         print("You've lost!")
         print(f"The code was: {code}")
         return False
     else:
         return True
+
+def reset():
+    results = []
+    possible_combinations_copy = possible_combinations.copy()
+    user_picks = []
 
 
 def player_vs_computer():
@@ -135,6 +147,21 @@ def computer_turn_simple(round_number):
                             possible_combinations_copy.remove(i)
                         except ValueError:
                             pass
+
+        temp_list = []
+        # als de feedback [0,x] is dan betekent dat dat je voor elke letter zeker weet dat ze niet in de huidige postie horen, ik elimneer hier die opties
+        if (previous_result[0] == 0):
+            for i in possible_combinations_copy:
+                counter = 0
+                for x in range(len(previous_user_pick)):
+                    if (previous_user_pick[x] != i[x]):
+                        counter += 1
+                if counter == 4:
+                    temp_list.append(i)
+            possible_combinations_copy = temp_list
+
+
+
         #als alle letters hetzelfde zijn en er komt er tenminste één van voor in de code, delete dan alle opties zonder die letter
         if(len(set(previous_user_pick))==1):
             if(previous_result[0]>=1):
@@ -144,6 +171,8 @@ def computer_turn_simple(round_number):
                             possible_combinations_copy.remove(i)
                         except ValueError:
                             pass
+
+
 
         #als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
         if(previous_result[0] + previous_result[1] == 4):
@@ -158,29 +187,47 @@ def computer_turn_simple(round_number):
 
             possible_combinations_copy = temp_list
 
-
         rand = random.randint(0, len(possible_combinations_copy) - 1)
         guess = possible_combinations_copy[rand]
         possible_combinations_copy.remove(guess)
 
+
         return guess
 
-
 def computer_vs_computer():
+
     generate_code()
     round_number = 0
-    while (check_for_end()):
+    while (check_for_end(round_number)):
         round_number += 1
         print_board()
         print()
         picks = computer_turn_simple(round_number)
         user_picks.append(picks)
         results.append(check_placement(picks))
-        time.sleep(0.2)
+        time.sleep(0)
+
+def reset():
+    global code
+    global user_picks
+    global results
+    global possible_combinations_copy
+    global possible_combinations
+    user_picks = []
+    results = []
+    possible_combinations_copy = possible_combinations.copy()
+    code = []
+
+
+
+
+
 
 
 
 computer_vs_computer()
+
+
 
 
 
