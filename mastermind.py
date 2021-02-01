@@ -138,7 +138,7 @@ def computer_turn_simple(round_number):
         previous_user_pick = user_picks[round_number-2]
 
 
-        # als geen van de gegokte getallen voorkomen in de code delete dat x/6e van de opties
+        # als geen van de gegokte getallen voorkomen in de code delete dan alle opties met die getallen
         if(previous_result[1] == 0 and previous_result[0] == 0):
             for x in set(previous_user_pick):
                 for i in possible_combinations:
@@ -170,7 +170,6 @@ def computer_turn_simple(round_number):
                             possible_combinations_copy.remove(i)
                         except ValueError:
                             pass
-
 
 
         #als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
