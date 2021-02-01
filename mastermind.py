@@ -2,8 +2,8 @@ import random
 import time
 import itertools
 from itertools import product
-
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 user_picks = []
 options = ['A','B','C','D','E','F']
@@ -292,15 +292,31 @@ def reset_rounds():
 
 
 def get_avg(limit,mode):
-    'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel'
+    'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
     reset()
     for x in range(limit):
         computer_vs_computer(False,mode)
 
     print(f'avg rounds before win: {sum(rounds)/limit} {mode}')
+
+    round_catagories = list(set(rounds))
+    round_catagories_freq = []
+
+    for x in round_catagories:
+        round_catagories_freq.append(rounds.count(x))
+
+    height = round_catagories_freq
+    bars = round_catagories
+    y_pos = np.arange(len(bars))
+
+    plt.title(f'Frequency of guesses utill game win; {mode}')
+    plt.bar(y_pos, height)
+
+    plt.xticks(y_pos, bars)
+
+    plt.show()
+    plt.close()
     reset_rounds()
-
-
 
 
 #-----------------------------------------------------------------------------------------------------------------------
