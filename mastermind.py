@@ -201,6 +201,9 @@ def computer_turn_heuristic(round_number):
 
             possible_combinations_copy = temp_list
 
+
+
+        #van de 4 letters in een gok met [x,y] x+y=z, mogen er in de volgende gok nooit meer dan z van de 4 letters voorkomen.
         temp_list = []
         if(len(possible_combinations_copy)>1):
             if((carry_over == 1 or carry_over == 2 or carry_over ==3)and len(set(previous_user_pick)) > 2):
@@ -231,7 +234,7 @@ def computer_turn_heuristic(round_number):
 
 
 def computer_turn_simple(round_number):
-    'gebaseerd op het Five-guess algorithm van Donal Knuth'
+    'gebaseerd op het Five-guess algorithme van Donal Knuth'
     global possible_combinations_copy
 
     if(round_number==1):
