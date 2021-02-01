@@ -20,8 +20,6 @@ for i in product(options_string, repeat=4):
 possible_combinations_copy = possible_combinations.copy()
 
 def generate_code():
-
-
     for x in range(4):
         rand = random.randint(0, len(options)-1)
         code.append(options[rand])
@@ -92,7 +90,7 @@ def check_for_end(round_number,prints):
             print(f"The code was: {code}")
         rounds.append(round_number)
         return False
-    elif(len(results)==1000):
+    elif(len(results)==10):
         print_board()
         print("You've lost!")
         print(f"The code was: {code}")
@@ -108,8 +106,11 @@ def reset():
 
 def player_vs_computer():
     'gameplayloop voor speler tegen computer'
+
+    round_number = 0
     generate_code()
-    while(check_for_end()):
+    while(check_for_end(round_number,True)):
+        round_number += 1
         print_board()
         picks = player_turn()
         user_picks.append(picks)
@@ -126,8 +127,11 @@ def computer_turn_random():
 
 
 def computer_turn_simple(round_number):
+    'loop door meerdere loops heen om te kijken of specifieke condities gelden, zo ja, gooi dan een deel van de mogelijke gokken (we starten met 1296) weg zodat de kans op een goede gok hoger wordt'
     global possible_combinations_copy
 
+
+    #eerste gok is random
     if(round_number==1):
         rand = random.randint(0, len(possible_combinations_copy) - 1)
         first_pick = possible_combinations[rand]
@@ -139,6 +143,7 @@ def computer_turn_simple(round_number):
         previous_result = results[round_number-2]
         previous_user_pick = user_picks[round_number-2]
 
+        carry_over = previous_result[0] + previous_result[1]
 
         # als geen van de gegokte getallen voorkomen in de code delete dan alle opties met die getallen
         if(previous_result[1] == 0 and previous_result[0] == 0):
@@ -164,7 +169,7 @@ def computer_turn_simple(round_number):
 
 
         #[x,y] x+y = z, split de 4 gokken van de speler in een lijst van lijsten z groot, delete alle opties waar niet tenminste 1 sublijst in voorkomt
-        carry_over = previous_result[0]+previous_result[1]
+
         if(4>carry_over > 0):
             temp_list = []
             previous_user_pick_string = ''
@@ -204,6 +209,25 @@ def computer_turn_simple(round_number):
 
             possible_combinations_copy = temp_list
 
+        temp_list = []
+        if(len(possible_combinations_copy)>1):
+            if((carry_over == 1 or carry_over == 2 or carry_over ==3)and len(set(previous_user_pick)) > 2):
+
+                    previous_user_pick_copy = previous_user_pick.copy()
+                    for x in previous_user_pick_copy:
+                        if(previous_user_pick.count(x)>1):
+                            previous_user_pick_copy.remove(x)
+
+                    for i in possible_combinations_copy:
+                        count = 0
+                        if (len(set(i))==4):
+                            for x in previous_user_pick_copy:
+                                if(x in i):
+                                    count+=1
+                        if(count <= carry_over):
+                            temp_list.append(i)
+                    possible_combinations_copy = temp_list
+
 
         rand = random.randint(0, len(possible_combinations_copy) - 1)
         guess = possible_combinations_copy[rand]
@@ -235,6 +259,8 @@ def reset():
     global results
     global possible_combinations_copy
     global possible_combinations
+    global previous_user_pick
+    previous_user_pick = []
     user_picks = []
     results = []
     possible_combinations_copy = possible_combinations.copy()
@@ -248,14 +274,20 @@ def get_avg(limit):
         print(f'{x}/{limit}')
         computer_vs_computer(False)
 
-    print(f'avg rounds: {sum(rounds)/limit}')
+    print(f'avg rounds before win: {sum(rounds)/limit}')
 
 
+
+#-----------------------------------------------------------------------------------------------------------------------
+
+#bereken in hoeveel rondes de computer gemiddeld wint
+#get_avg(10000)
+
+#speel tegen de computer
+#player_vs_computer()
+
+#computer speelt tegen de computer
 computer_vs_computer(True)
-get_avg(1000)
-
-
-
 
 
 
