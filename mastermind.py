@@ -98,12 +98,6 @@ def check_for_end(round_number,prints):
     else:
         return True
 
-def reset():
-    results = []
-    possible_combinations_copy = possible_combinations.copy()
-    user_picks = []
-
-
 def player_vs_computer():
     'gameplayloop voor speler tegen computer'
 
