@@ -225,10 +225,20 @@ def computer_turn_heuristic(round_number):
 
         return guess
 
+def core_simple_algorithm(round_number):
+    'het core algorithme van de Simple methode'
 
+    global possible_combinations_copy
+    previous_result = results[round_number - 2]
+    previous_user_pick = user_picks[round_number - 2]
+
+    temp_list = []
+    for i in possible_combinations_copy:
+        if (check_placement(i, previous_user_pick)) == previous_result:
+            temp_list.append(i)
+        possible_combinations_copy = temp_list
 
 def computer_turn_simple(round_number):
-    'gebaseerd op het Five-guess algorithme van Donal Knuth'
     global possible_combinations_copy
 
     if(round_number==1):
@@ -237,11 +247,7 @@ def computer_turn_simple(round_number):
         previous_result = results[round_number-2]
         previous_user_pick = user_picks[round_number-2]
 
-        temp_list = []
-        for i in possible_combinations_copy:
-            if(check_placement(i,previous_user_pick))==previous_result:
-                temp_list.append(i)
-            possible_combinations_copy = temp_list
+        core_simple_algorithm(round_number)
 
         #dit werkt 0,3 average guesses beter dan altijd het 1e element selecteren
         rand = random.randint(0, len(possible_combinations_copy) - 1)
@@ -249,6 +255,44 @@ def computer_turn_simple(round_number):
         possible_combinations_copy.remove(guess)                      
 
         return guess
+
+def computer_turn_ahead(round_number):
+    global possible_combinations_copy
+
+    if (round_number == 1):
+        return ['A', 'A', 'B', 'B']
+    else:
+        previous_result = results[round_number - 2]
+        previous_user_pick = user_picks[round_number - 2]
+        temp_list = []
+
+        core_simple_algorithm(round_number)
+
+        feedback_length_list = []
+        for i in possible_combinations_copy:
+            feedback_list = []
+            possible_feedback = [[0,0],[0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2], [3, 0],
+                                 [3, 1], [4, 0]]
+
+            for j in possible_combinations_copy:
+                feedback = check_placement(j,i)
+                if(feedback in possible_feedback):
+                    feedback_list.append(feedback)
+                    possible_feedback.remove(feedback)
+
+            feedback_length_list.append([len(feedback_list),i])
+
+        possible_guesses = []
+        for i in feedback_length_list:
+            if int(i[0])== max(feedback_length_list)[0]:
+                possible_guesses.append(i[1])
+
+        guess = possible_guesses[random.randint(0,len(possible_guesses)-1)]
+        possible_combinations_copy.remove(guess)
+
+
+    return guess
+
 
 def computer_vs_computer(prints,mode):
     'computer vs computer gamemode, prints is boolean en print het spel wel of niet in de console'
@@ -260,7 +304,8 @@ def computer_vs_computer(prints,mode):
         if(prints):
             print_board()
             print()
-
+        if(mode == 'ahead'):
+            picks = computer_turn_ahead(round_number)
         if(mode == 'heuristic'):
             picks = computer_turn_heuristic(round_number)
         if(mode == 'simple'):
@@ -323,8 +368,9 @@ def get_avg(limit,mode):
 
 
 #bereken in hoeveel rondes de computer gemiddeld wint
-get_avg(500,'simple')
-get_avg(500,'heuristic')
+get_avg(500,'simple')# ~5 sec at 500 rounds
+get_avg(500,'heuristic') #~5 sec at 500 rounds
+#get_avg(500,'ahead') # ~110 sec at 500 rounds
 
 #speel tegen de computer
 #player_vs_computer()
@@ -332,6 +378,8 @@ get_avg(500,'heuristic')
 #computer speelt tegen de computer
 #computer_vs_computer(True,'simple')
 #computer_vs_computer(True,'heuristic')
+#computer_vs_computer(True,'ahead')
+
 
 
 
