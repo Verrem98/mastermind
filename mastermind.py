@@ -318,7 +318,7 @@ def computer_vs_computer(prints,mode):
     reset()
 
 def reset():
-    'gebruik kan classes/constructor dus moet mijn lists resetten'
+    'gebruik geen classes/constructor dus moet mijn lists resetten'
     global code
     global user_picks
     global results
@@ -335,8 +335,6 @@ def reset_rounds():
     'resets the list that tracks the rounds'
     global rounds
     rounds = []
-
-
 
 def get_avg(limit,mode):
     'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
