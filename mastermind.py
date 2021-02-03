@@ -244,9 +244,6 @@ def computer_turn_simple(round_number):
     if(round_number==1):
         return ['A','A','B','B']
     else:
-        previous_result = results[round_number-2]
-        previous_user_pick = user_picks[round_number-2]
-
         core_simple_algorithm(round_number)
 
         #dit werkt 0,3 average guesses beter dan altijd het 1e element selecteren
@@ -257,30 +254,38 @@ def computer_turn_simple(round_number):
         return guess
 
 def computer_turn_ahead(round_number):
+    'kijkt voor elke resterende optie welke optie de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
     global possible_combinations_copy
 
     if (round_number == 1):
         return ['A', 'A', 'B', 'B']
     else:
-        previous_result = results[round_number - 2]
-        previous_user_pick = user_picks[round_number - 2]
-        temp_list = []
-
         core_simple_algorithm(round_number)
 
         feedback_length_list = []
+        highest = 0
         for i in possible_combinations_copy:
             feedback_list = []
-            possible_feedback = [[0,0],[0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2], [3, 0],
-                                 [3, 1], [4, 0]]
+            possible_feedback = [[0,0],[0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2], [3, 0]]
 
             for j in possible_combinations_copy:
                 feedback = check_placement(j,i)
+
                 if(feedback in possible_feedback):
                     feedback_list.append(feedback)
                     possible_feedback.remove(feedback)
 
-            feedback_length_list.append([len(feedback_list),i])
+                    #als de feedback list 12/12 lang is betekent dat dat het een optimale gok is, je hoeft daarna dus niet verder te kijken
+                    #dit versnelt het algorithme enorm
+                    if(len(feedback_list)==12):
+                        guess = i
+                        possible_combinations_copy.remove(guess)
+                        return guess
+
+            if(len(feedback_list)>=highest):
+                feedback_length_list.append([len(feedback_list),i])
+                highest = len(feedback_list)
+
 
         possible_guesses = []
         for i in feedback_length_list:
@@ -368,9 +373,9 @@ def get_avg(limit,mode):
 
 
 #bereken in hoeveel rondes de computer gemiddeld wint
-get_avg(500,'simple')# ~5 sec at 500 rounds
-get_avg(500,'heuristic') #~5 sec at 500 rounds
-#get_avg(500,'ahead') # ~110 sec at 500 rounds
+#get_avg(500,'simple')# ~5 sec at 500 rounds
+#get_avg(500,'heuristic') #~5 sec at 500 rounds
+#get_avg(5000,'ahead') # ~110 sec at 500 rounds
 
 #speel tegen de computer
 #player_vs_computer()
