@@ -357,13 +357,13 @@ def get_avg(limit,mode):
 
     height = round_catagories_freq
     bars = round_catagories
-    y_pos = np.arange(len(bars))
 
-    plt.title(f'Frequency of guesses utill game win; {mode}')
-    plt.bar(y_pos, height)
-
-    plt.xticks(y_pos, bars)
-
+    plt.title(f'Frequency of rounds played untill win | "{mode}"', loc = 'left')
+    plt.title(f'avg: {sum(rounds)/limit}', loc = 'right')
+    plt.bar(bars, height)
+    plt.ylabel('frequency')
+    plt.xlabel('rounds')
+    plt.xticks(bars)
     plt.show()
     plt.close()
     reset_rounds()
@@ -373,9 +373,9 @@ def get_avg(limit,mode):
 
 
 #bereken in hoeveel rondes de computer gemiddeld wint
-#get_avg(500,'simple')# ~5 sec at 500 rounds
-#get_avg(500,'heuristic') #~5 sec at 500 rounds
-#get_avg(5000,'ahead') # ~110 sec at 500 rounds
+get_avg(500,'simple')
+get_avg(500,'heuristic')
+get_avg(500,'ahead')
 
 #speel tegen de computer
 #player_vs_computer()
