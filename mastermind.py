@@ -2,7 +2,6 @@ import random
 import time
 import itertools
 from itertools import product
-import numpy as np
 import matplotlib.pyplot as plt
 
 user_picks = []
@@ -111,11 +110,17 @@ def player_vs_computer():
         results.append(check_placement(picks,code))
 
 #--------------------------------------------------------------------------------------------------------------
+def pick_random_guess():
+    'returnt een random guess uit de lijst van mogelijke opties'
+    rand = random.randint(0, len(possible_combinations_copy) - 1)
+    guess = possible_combinations_copy[rand]
+    possible_combinations_copy.remove(guess)
+
+    return guess
 
 def computer_turn_heuristic(round_number):
     'loop door meerdere loops heen om te kijken of specifieke condities gelden, zo ja, gooi dan een deel van de mogelijke gokken (we starten met 1296) weg zodat de kans op een goede gok hoger wordt'
     global possible_combinations_copy
-
 
     #eerste gok is random
     if(round_number==1):
@@ -218,12 +223,9 @@ def computer_turn_heuristic(round_number):
                     possible_combinations_copy = temp_list
 
 
-        rand = random.randint(0, len(possible_combinations_copy) - 1)
-        guess = possible_combinations_copy[rand]
-        possible_combinations_copy.remove(guess)
 
 
-        return guess
+        return pick_random_guess()
 
 def core_simple_algorithm(round_number):
     'het core algorithme van de Simple methode'
@@ -246,12 +248,7 @@ def computer_turn_simple(round_number):
     else:
         core_simple_algorithm(round_number)
 
-        #dit werkt 0,3 average guesses beter dan altijd het 1e element selecteren
-        rand = random.randint(0, len(possible_combinations_copy) - 1)
-        guess = possible_combinations_copy[rand]
-        possible_combinations_copy.remove(guess)                      
-
-        return guess
+        return pick_random_guess()
 
 def computer_turn_ahead(round_number):
     'kijkt voor elke resterende optie welke optie de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
