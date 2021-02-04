@@ -355,7 +355,6 @@ def computer_turn_worst_case(round_number):
             possible_feedback_count = []
             for x in possible_feedback:
                 possible_feedback_count.append([feedback_list.count(x)])
-            print(feedback_list)
 
             feedback_max_list.append([max(possible_feedback_count)[0],i])
 
