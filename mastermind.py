@@ -387,17 +387,9 @@ def play_game():
 
 
 # ---------------------------------------------------------------------------------------------------------------------
+#maakt een graph over de efficiëntie van verschillende algorithmes
 get_avg(500,'simple')
 get_avg(500,'ahead')
 get_avg(500,'heuristic')
 
 play_game()
-#computer_vs_computer(True, 'simple')
-
-# speel tegen de computer
-# player_vs_computer()
-
-# computer speelt tegen de computer
-# computer_vs_computer(True,'simple')
-# computer_vs_computer(True,'heuristic')
-# computer_vs_computer(True,'ahead')
