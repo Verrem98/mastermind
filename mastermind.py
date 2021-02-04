@@ -42,9 +42,7 @@ def player_turn():
 
 
 def check_placement(picks, code):
-
-
-    """kijkt welke user picks correct zijn, geeft het terug in een list in het format: [goede_letter_goede_postie,goede_letter]
+    """kijkt welke user picks correct zijn, geef feedback terug in een list in het format: [goede_letter_goede_postie,goede_letter_verkeerde_positie]
 
               Args:
                   picks: de gekozen gok
