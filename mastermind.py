@@ -295,7 +295,7 @@ def computer_turn_ahead(round_number):
     return guess
 
 
-def computer_vs_computer(prints, mode):
+def computer_vs_computer(prints, mode, sleep):
     'computer vs computer gamemode, prints is boolean en print het spel wel of niet in de console'
 
     generate_code()
@@ -313,7 +313,7 @@ def computer_vs_computer(prints, mode):
             picks = computer_turn_simple(round_number)
         user_picks.append(picks)
         results.append(check_placement(picks, code))
-        time.sleep(0)
+        time.sleep(sleep)
     reset()
 
 
@@ -342,7 +342,7 @@ def get_avg(limit, mode):
     'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
     reset()
     for x in range(limit):
-        computer_vs_computer(False, mode)
+        computer_vs_computer(False, mode,0)
 
     print(f'avg rounds before win: {sum(rounds) / limit} {mode}')
 
@@ -379,7 +379,7 @@ def play_game():
             user_input = input("pick computer mode: 'heuristic','simple,'ahead'\n")
             if(user_input in computer_mode_choices):
                 break
-        computer_vs_computer(True, user_input)
+        computer_vs_computer(True, user_input,1)
 
     elif(user_input == 'player vs computer'):
 
