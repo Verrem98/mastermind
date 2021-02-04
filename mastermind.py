@@ -42,7 +42,14 @@ def player_turn():
 
 
 def check_placement(picks, code):
-    'kijkt welke user picks correct zijn, geeft het terug in een list in het format: [goede_letter_goede_postie,goede_letter]'
+
+
+    """kijkt welke user picks correct zijn, geeft het terug in een list in het format: [goede_letter_goede_postie,goede_letter]
+
+              Args:
+                  picks: de gekozen gok
+                  code: de code waarme de gok wordt vergeleken
+          """
 
     perfect_placement = []  # de index van de correcte letters op de correcte plaats, heb index nodig voor een list.pop later
     good_placement = []  # de correcte overige letters op de verkeerde plaats, geen index nodig
@@ -67,7 +74,7 @@ def check_placement(picks, code):
 
 
 def print_board():
-    'print hoeveel pogingen je nog hebt en je gokgeschiedenis'
+    'print hoeveel pogingen je nog hebt, je feedback, en je gokgeschiedenis in de vorm van een bord'
     for i in range(10 - len(results)):
         for x in range(4):
             print('-', end='')
@@ -82,7 +89,12 @@ def print_board():
 
 
 def check_for_end(round_number, prints):
-    'kijkt of de eindconditie bereikt is'
+    """kijkt of een van de eindcondities bereikt is
+
+           Args:
+               prints: of het speelbord wel of niet geprint moet worden
+               round_number: wat de huidige ronde in het spel is
+       """
 
     if ([4, 0] in results):
         if (prints):
@@ -125,7 +137,11 @@ def pick_random_guess():
 
 
 def computer_turn_heuristic(round_number):
-    'loop door meerdere loops heen om te kijken of specifieke condities gelden, zo ja, gooi dan een deel van de mogelijke gokken (we starten met 1296) weg zodat de kans op een goede gok hoger wordt'
+    """dit algorithme elimineert 'onmogelijke gokken' uit een lijst van mogelijke gokken op verschillende manieren'
+
+                    Args:
+                       round_number: wat de huidige ronde in het spel is
+            """
     global possible_combinations_copy
 
     # eerste gok is random
@@ -226,7 +242,12 @@ def computer_turn_heuristic(round_number):
 
 
 def core_simple_algorithm(round_number):
-    'het core algorithme van de Simple methode'
+    """kijk voor elke resterende gok in possible_options_copy welke gokkken consistent zijn met voorgaande gokken, pas de lijst met mogelijke gokken aan'
+
+                    Args:
+                       round_number: wat de huidige ronde in het spel is
+            """
+
 
     global possible_combinations_copy
     previous_result = results[round_number - 2]
@@ -240,6 +261,11 @@ def core_simple_algorithm(round_number):
 
 
 def computer_turn_simple(round_number):
+    """start de eerste gok met [AABB] in ronde 1, pak daarna een random gok uit de lijst met mogelijke gokken'
+
+                 Args:
+                    round_number: wat de huidige ronde in het spel is
+         """
     global possible_combinations_copy
 
     if (round_number == 1):
@@ -251,7 +277,11 @@ def computer_turn_simple(round_number):
 
 
 def computer_turn_ahead(round_number):
-    'kijkt voor elke resterende optie welke optie de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+
+               Args:
+                  round_number: wat de huidige ronde in het spel is
+       """
     global possible_combinations_copy
 
     if (round_number == 1):
@@ -296,8 +326,14 @@ def computer_turn_ahead(round_number):
 
 
 def computer_vs_computer(prints, mode, sleep):
-    'computer vs computer gamemode, prints is boolean en print het spel wel of niet in de console'
+    """een volledig computer vs computer spel
 
+        Args:
+            prints: of het speelbord wel of niet geprint moet worden
+            mode: het soort algorithme dat de bot gebruikt
+            sleep: de tijd de bot wacht tussen turns
+    """
+    picks = user_picks
     generate_code()
     round_number = 0
     while (check_for_end(round_number, prints)):
@@ -339,7 +375,13 @@ def reset_rounds():
 
 
 def get_avg(limit, mode):
-    'geef aan hoe veel games je wilt spelen als limit, geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
+    """ geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
+
+            Args:
+                limit: hoe vaak je een volledige game rotatie aanroept voordat je het gemiddelde berekent
+                mode: van welk bot algorithme het gemiddelde moet worden berekend
+
+    """
     reset()
     for x in range(limit):
         computer_vs_computer(False, mode,0)
