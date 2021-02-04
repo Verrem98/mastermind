@@ -280,9 +280,9 @@ def computer_turn_simple(round_number):
         return pick_random_guess()
 
 
+
 def computer_turn_ahead(round_number):
     """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
-
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
@@ -329,6 +329,47 @@ def computer_turn_ahead(round_number):
     return guess
 
 
+def computer_turn_worst_case(round_number):
+    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+
+               Args:
+                  round_number: wat de huidige ronde in het spel is
+       """
+    global possible_combinations_copy
+
+    if (round_number == 1):
+        return ['A', 'A', 'B', 'B']
+    else:
+        core_simple_algorithm(round_number)
+
+        feedback_max_list = []
+        for i in possible_combinations_copy:
+            feedback_list = []
+            possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
+                                 [3, 0]]
+
+            for j in possible_combinations_copy:
+                feedback = check_placement(j, i)
+                feedback_list.append(feedback)
+
+            possible_feedback_count = []
+            for x in possible_feedback:
+                possible_feedback_count.append([feedback_list.count(x)])
+            print(feedback_list)
+
+            feedback_max_list.append([max(possible_feedback_count)[0],i])
+
+        final_guess_list = []
+        for i in feedback_max_list:
+            if i[0] == min(feedback_max_list)[0]:
+                final_guess_list.append(i[1])
+
+        guess = final_guess_list[random.randint(0,len(final_guess_list)-1)]
+        possible_combinations_copy.remove(guess)
+
+    return guess
+
+
 def computer_vs_computer(prints, mode, sleep):
     """een volledig computer vs computer spel
 
@@ -351,6 +392,8 @@ def computer_vs_computer(prints, mode, sleep):
             picks = computer_turn_heuristic(round_number)
         if (mode == 'simple'):
             picks = computer_turn_simple(round_number)
+        if (mode == 'worst_case'):
+            picks = computer_turn_worst_case(round_number)
         user_picks.append(picks)
         results.append(check_placement(picks, code))
         time.sleep(sleep)
@@ -431,16 +474,9 @@ def play_game():
 
         player_vs_computer()
 
-
 # ---------------------------------------------------------------------------------------------------------------------
-get_avg(500,'ahead')
 
-play_game()
-#computer_vs_computer(True, 'simple')
-
-# speel tegen de computer
-# player_vs_computer()
-
+computer_vs_computer(True,'worst_case',0)
 # computer speelt tegen de computer
 # computer_vs_computer(True,'simple')
 # computer_vs_computer(True,'heuristic')
