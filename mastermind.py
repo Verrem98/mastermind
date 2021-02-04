@@ -1,31 +1,33 @@
 import random
 import time
 import itertools
-from itertools import product
 import matplotlib.pyplot as plt
 
-user_picks = []
 options = ['A', 'B', 'C', 'D', 'E', 'F']
 options_string = 'ABCDEF'
+
+user_picks = []
 code = []
 results = []
 possible_combinations = []
 rounds = []
 
-for i in product(options_string, repeat=4):
+for i in itertools.product(options_string, repeat=4):
     possible_combinations.append(list(i))
 
 possible_combinations_copy = possible_combinations.copy()
 
 
 def generate_code():
+    """maak een random code aan"""
     for x in range(4):
         rand = random.randint(0, len(options) - 1)
         code.append(options[rand])
 
 
 def player_turn():
-    while (True):
+    """returnt de code die de gebruiker wilt gokken"""
+    while True:
         pick = input().upper()
 
         picks = (list(pick))
@@ -42,14 +44,17 @@ def player_turn():
 
 
 def check_placement(picks, code):
-    """kijkt welke user picks correct zijn, geef feedback terug in een list in het format: [goede_letter_goede_postie,goede_letter_verkeerde_positie]
+    """kijkt welke user picks correct zijn, geef feedback terug in een list in het format:
+        [goede_letter_goede_postie,goede_letter_verkeerde_positie]
 
               Args:
                   picks: de gekozen gok
                   code: de code waarme de gok wordt vergeleken
           """
 
-    perfect_placement = []  # de index van de correcte letters op de correcte plaats, heb index nodig voor een list.pop later
+    perfect_placement = []  # de index van de correcte letters op de correcte plaats
+    # heb index nodig voor een list.pop later
+
     good_placement = []  # de correcte overige letters op de verkeerde plaats, geen index nodig
     picks_copy = picks.copy()
     code_copy = code.copy()
@@ -63,7 +68,7 @@ def check_placement(picks, code):
         code_copy.pop(perfect_placement[x] - x)
 
     for pick in picks_copy:
-        if (pick in code_copy):
+        if pick in code_copy:
             good_placement.append(pick)
             code_copy.remove(pick)
 
@@ -72,7 +77,8 @@ def check_placement(picks, code):
 
 
 def print_board():
-    'print hoeveel pogingen je nog hebt, je feedback, en je gokgeschiedenis in de vorm van een bord'
+    """print hoeveel pogingen je nog hebt, je feedback, en je gokgeschiedenis in de vorm van een bord"""
+
     for i in range(10 - len(results)):
         for x in range(4):
             print('-', end='')
@@ -94,15 +100,15 @@ def check_for_end(round_number, prints):
                round_number: wat de huidige ronde in het spel is
        """
 
-    if ([4, 0] in results):
-        if (prints):
+    if [4, 0] in results:
+        if prints:
             print_board()
             print(f"round: {round_number}")
             print("You've guessed the code!")
             print(f"The code was: {code}")
         rounds.append(round_number)
         return False
-    elif (len(results) == 10):
+    elif len(results) == 10:
         print_board()
         print("You've lost!")
         print(f"The code was: {code}")
@@ -112,7 +118,7 @@ def check_for_end(round_number, prints):
 
 
 def player_vs_computer():
-    'gameplayloop voor speler tegen computer'
+    'een volledig speler vs computer spel'
 
     round_number = 0
     generate_code()
