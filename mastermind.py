@@ -354,9 +354,9 @@ def computer_turn_worst_case(round_number):
 
             possible_feedback_count = []
             for x in possible_feedback:
-                possible_feedback_count.append([feedback_list.count(x)])
+                possible_feedback_count.append(feedback_list.count(x))
 
-            feedback_max_list.append([max(possible_feedback_count)[0],i])
+            feedback_max_list.append([max(possible_feedback_count),i])
 
         final_guess_list = []
         for i in feedback_max_list:
@@ -368,6 +368,42 @@ def computer_turn_worst_case(round_number):
 
     return guess
 
+
+def computer_turn_expected(round_number):
+    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+
+               Args:
+                  round_number: wat de huidige ronde in het spel is
+       """
+    global possible_combinations_copy
+
+    if (round_number == 1):
+        return ['A', 'A', 'B', 'B']
+    else:
+        core_simple_algorithm(round_number)
+        expected_value_for_codes = []
+        for i in possible_combinations_copy:
+            feedback_list = []
+            possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
+                                 [3, 0],[4,0]]
+
+            for x in possible_combinations_copy:
+                feedback = check_placement(x, i)
+                feedback_list.append(feedback)
+
+            possible_feedback_count = []
+            for x in possible_feedback:
+                possible_feedback_count.append(feedback_list.count(x))
+
+            expected_value = 0
+            for x in possible_feedback_count:
+                expected_value += x**2/(sum(possible_feedback_count))
+            expected_value_for_codes.append([expected_value,i])
+
+        guess = (min(expected_value_for_codes)[1])
+        possible_combinations_copy.remove(guess)
+
+    return guess
 
 def computer_vs_computer(prints, mode, sleep):
     """een volledig computer vs computer spel
@@ -393,6 +429,10 @@ def computer_vs_computer(prints, mode, sleep):
             picks = computer_turn_simple(round_number)
         if (mode == 'worst_case'):
             picks = computer_turn_worst_case(round_number)
+        if (mode == 'expected'):
+            picks = computer_turn_expected(round_number)
+
+
         user_picks.append(picks)
         results.append(check_placement(picks, code))
         time.sleep(sleep)
@@ -475,8 +515,4 @@ def play_game():
 
 # ---------------------------------------------------------------------------------------------------------------------
 
-computer_vs_computer(True,'worst_case',0)
-# computer speelt tegen de computer
-# computer_vs_computer(True,'simple')
-# computer_vs_computer(True,'heuristic')
-# computer_vs_computer(True,'ahead')
+computer_vs_computer(True,'expected',0)
