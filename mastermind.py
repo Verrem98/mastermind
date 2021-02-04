@@ -433,9 +433,7 @@ def play_game():
 
 
 # ---------------------------------------------------------------------------------------------------------------------
-get_avg(500,'simple')
 get_avg(500,'ahead')
-get_avg(500,'heuristic')
 
 play_game()
 #computer_vs_computer(True, 'simple')
