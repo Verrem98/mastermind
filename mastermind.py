@@ -9,13 +9,13 @@ options_string = 'ABCDEF'
 user_picks = []
 code = []
 results = []
-possible_combinations = []
+possible_combinations_static = []
 rounds = []
 
 for i in itertools.product(options_string, repeat=4):
-    possible_combinations.append(list(i))
+    possible_combinations_static.append(list(i))
 
-possible_combinations_copy = possible_combinations.copy()
+possible_combinations_mutable = possible_combinations_static.copy()
 
 
 def generate_code():
@@ -133,9 +133,9 @@ def player_vs_computer():
 # --------------------------------------------------------------------------------------------------------------
 def pick_random_guess():
     'returnt een random guess uit de lijst van mogelijke opties'
-    rand = random.randint(0, len(possible_combinations_copy) - 1)
-    guess = possible_combinations_copy[rand]
-    possible_combinations_copy.remove(guess)
+    rand = random.randint(0, len(possible_combinations_mutable) - 1)
+    guess = possible_combinations_mutable[rand]
+    possible_combinations_mutable.remove(guess)
 
     return guess
 
@@ -146,13 +146,13 @@ def computer_turn_heuristic(round_number):
                     Args:
                        round_number: wat de huidige ronde in het spel is
             """
-    global possible_combinations_copy
+    global possible_combinations_mutable
 
     # eerste gok is random
     if (round_number == 1):
-        rand = random.randint(0, len(possible_combinations_copy) - 1)
-        first_pick = possible_combinations[rand]
-        possible_combinations_copy.remove(first_pick)
+        rand = random.randint(0, len(possible_combinations_mutable) - 1)
+        first_pick = possible_combinations_static[rand]
+        possible_combinations_mutable.remove(first_pick)
 
         return first_pick
 
@@ -165,23 +165,23 @@ def computer_turn_heuristic(round_number):
         # als geen van de gegokte getallen voorkomen in de code delete dan alle opties met die getallen
         if (previous_result[1] == 0 and previous_result[0] == 0):
             for x in set(previous_user_pick):
-                for i in possible_combinations:
+                for i in possible_combinations_static:
                     if x in i:
                         try:
-                            possible_combinations_copy.remove(i)
+                            possible_combinations_mutable.remove(i)
                         except ValueError:
                             pass
 
         temp_list = []
         # als de feedback [0,x] is dan betekent dat dat je voor elke letter zeker weet dat ze niet in de huidige postie horen, ik elimneer hier die opties
-        for i in possible_combinations_copy:
+        for i in possible_combinations_mutable:
             counter = 0
             for x in range(len(previous_user_pick)):
                 if (previous_user_pick[x] != i[x]):
                     counter += 1
             if counter == (4 - previous_result[0]):
                 temp_list.append(i)
-        possible_combinations_copy = temp_list
+        possible_combinations_mutable = temp_list
 
         # [x,y] x+y = z, split de 4 gokken van de speler in een lijst van lijsten z groot, delete alle opties waar niet tenminste 1 sublijst in voorkomt
 
@@ -195,7 +195,7 @@ def computer_turn_heuristic(round_number):
             for i in itertools.combinations(previous_user_pick_string, previous_result[0] + previous_result[1]):
                 sub_possible_combinations.append(list(i))
 
-            for i in possible_combinations_copy:
+            for i in possible_combinations_mutable:
                 count = 0
                 for x in sub_possible_combinations:
                     count2 = 0
@@ -207,24 +207,24 @@ def computer_turn_heuristic(round_number):
                 if (count > 0):
                     temp_list.append(i)
 
-            possible_combinations_copy = temp_list
+            possible_combinations_mutable = temp_list
 
         # als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
         if (previous_result[0] + previous_result[1] == 4):
             temp_list = []
-            for i in range(0, len(possible_combinations_copy)):
+            for i in range(0, len(possible_combinations_mutable)):
                 count = 0
                 for x in previous_user_pick:
-                    if (previous_user_pick.count(x) == possible_combinations_copy[i].count(x)):
+                    if (previous_user_pick.count(x) == possible_combinations_mutable[i].count(x)):
                         count += 1
                 if count == 4:
-                    temp_list.append(possible_combinations_copy[i])
+                    temp_list.append(possible_combinations_mutable[i])
 
-            possible_combinations_copy = temp_list
+            possible_combinations_mutable = temp_list
 
         # van de 4 letters in een gok met [x,y] x+y=z, mogen er in de volgende gok nooit meer dan z van de 4 letters voorkomen.
         temp_list = []
-        if (len(possible_combinations_copy) > 1):
+        if (len(possible_combinations_mutable) > 1):
             if ((carry_over == 1 or carry_over == 2 or carry_over == 3) and len(set(previous_user_pick)) > 2):
 
                 previous_user_pick_copy = previous_user_pick.copy()
@@ -232,7 +232,7 @@ def computer_turn_heuristic(round_number):
                     if (previous_user_pick.count(x) > 1):
                         previous_user_pick_copy.remove(x)
 
-                for i in possible_combinations_copy:
+                for i in possible_combinations_mutable:
                     count = 0
                     if (len(set(i)) == 4):
                         for x in previous_user_pick_copy:
@@ -240,7 +240,7 @@ def computer_turn_heuristic(round_number):
                                 count += 1
                     if (count <= carry_over):
                         temp_list.append(i)
-                possible_combinations_copy = temp_list
+                possible_combinations_mutable = temp_list
 
         return pick_random_guess()
 
@@ -253,15 +253,15 @@ def core_simple_algorithm(round_number):
             """
 
 
-    global possible_combinations_copy
+    global possible_combinations_mutable
     previous_result = results[round_number - 2]
     previous_user_pick = user_picks[round_number - 2]
 
     temp_list = []
-    for i in possible_combinations_copy:
+    for i in possible_combinations_mutable:
         if (check_placement(i, previous_user_pick)) == previous_result:
             temp_list.append(i)
-        possible_combinations_copy = temp_list
+        possible_combinations_mutable = temp_list
 
 
 def computer_turn_simple(round_number):
@@ -270,7 +270,7 @@ def computer_turn_simple(round_number):
                  Args:
                     round_number: wat de huidige ronde in het spel is
          """
-    global possible_combinations_copy
+    global possible_combinations_mutable
 
     if (round_number == 1):
         return ['A', 'A', 'B', 'B']
@@ -286,7 +286,7 @@ def computer_turn_ahead(round_number):
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
-    global possible_combinations_copy
+    global possible_combinations_mutable
 
     if (round_number == 1):
         return ['A', 'A', 'B', 'B']
@@ -295,12 +295,12 @@ def computer_turn_ahead(round_number):
 
         feedback_length_list = []
         highest = 0
-        for i in possible_combinations_copy:
+        for i in possible_combinations_mutable:
             feedback_list = []
             possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
                                  [3, 0]]
 
-            for j in possible_combinations_copy:
+            for j in possible_combinations_mutable:
                 feedback = check_placement(j, i)
 
                 if (feedback in possible_feedback):
@@ -311,7 +311,7 @@ def computer_turn_ahead(round_number):
                     # dit versnelt het algorithme enorm
                     if (len(feedback_list) == 12):
                         guess = i
-                        possible_combinations_copy.remove(guess)
+                        possible_combinations_mutable.remove(guess)
                         return guess
 
             if (len(feedback_list) >= highest):
@@ -324,7 +324,7 @@ def computer_turn_ahead(round_number):
                 possible_guesses.append(i[1])
 
         guess = possible_guesses[random.randint(0, len(possible_guesses) - 1)]
-        possible_combinations_copy.remove(guess)
+        possible_combinations_mutable.remove(guess)
 
     return guess
 
@@ -335,7 +335,7 @@ def computer_turn_worst_case(round_number):
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
-    global possible_combinations_copy
+    global possible_combinations_mutable
 
     if (round_number == 1):
         return ['A', 'A', 'B', 'B']
@@ -343,12 +343,12 @@ def computer_turn_worst_case(round_number):
         core_simple_algorithm(round_number)
 
         feedback_max_list = []
-        for i in possible_combinations_copy:
+        for i in possible_combinations_mutable:
             feedback_list = []
             possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
                                  [3, 0]]
 
-            for j in possible_combinations_copy:
+            for j in possible_combinations_mutable:
                 feedback = check_placement(j, i)
                 feedback_list.append(feedback)
 
@@ -364,7 +364,7 @@ def computer_turn_worst_case(round_number):
                 final_guess_list.append(i[1])
 
         guess = final_guess_list[random.randint(0,len(final_guess_list)-1)]
-        possible_combinations_copy.remove(guess)
+        possible_combinations_mutable.remove(guess)
 
     return guess
 
@@ -375,19 +375,19 @@ def computer_turn_expected(round_number):
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
-    global possible_combinations_copy
+    global possible_combinations_mutable
 
     if (round_number == 1):
         return ['A', 'A', 'B', 'B']
     else:
         core_simple_algorithm(round_number)
         expected_value_for_codes = []
-        for i in possible_combinations_copy:
+        for i in possible_combinations_mutable:
             feedback_list = []
             possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
                                  [3, 0],[4,0]]
 
-            for x in possible_combinations_copy:
+            for x in possible_combinations_mutable:
                 feedback = check_placement(x, i)
                 feedback_list.append(feedback)
 
@@ -401,7 +401,7 @@ def computer_turn_expected(round_number):
             expected_value_for_codes.append([expected_value,i])
 
         guess = (min(expected_value_for_codes)[1])
-        possible_combinations_copy.remove(guess)
+        possible_combinations_mutable.remove(guess)
 
     return guess
 
@@ -411,7 +411,7 @@ def computer_vs_computer(prints, mode, sleep):
         Args:
             prints: of het speelbord wel of niet geprint moet worden
             mode: het soort algorithme dat de bot gebruikt
-            sleep: de tijd de bot wacht tussen turns
+            sleep: de tijd(s) de bot wacht tussen turns
     """
     picks = user_picks
     generate_code()
@@ -444,13 +444,13 @@ def reset():
     global code
     global user_picks
     global results
-    global possible_combinations_copy
-    global possible_combinations
+    global possible_combinations_mutable
+    global possible_combinations_static
     global previous_user_pick
     previous_user_pick = []
     user_picks = []
     results = []
-    possible_combinations_copy = possible_combinations.copy()
+    possible_combinations_mutable = possible_combinations_static.copy()
     code = []
 
 
@@ -515,4 +515,4 @@ def play_game():
 
 # ---------------------------------------------------------------------------------------------------------------------
 
-computer_vs_computer(True,'expected',0)
+computer_vs_computer(True,'ahead',0)
