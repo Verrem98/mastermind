@@ -17,12 +17,13 @@ rounds = []
 # ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
 # bij het runnen van duizenden games
 
-
 possible_combinations_static = [list(z) for z in itertools.product('ABCDEF', repeat=4)]
 possible_combinations_mutable = possible_combinations_static.copy()
 
 
-def generate_start_options():
+def generate_start_option():
+    """maakt de eerste gok aan, een combinatie van [x,x,y,y] waar x en y, A-F kunnen zijn"""
+
     rand1 = 0
     rand2 = 0
     while rand1 == rand2:
@@ -289,7 +290,7 @@ def computer_turn_simple(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return generate_start_options()
+        return generate_start_option()
     else:
         core_simple_algorithm(round_number)
 
@@ -305,7 +306,7 @@ def computer_turn_ahead(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return generate_start_options()
+        return generate_start_option()
     else:
         core_simple_algorithm(round_number)
 
@@ -358,7 +359,7 @@ def computer_turn_worst_case(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return generate_start_options()
+        return generate_start_option()
     else:
         core_simple_algorithm(round_number)
 
@@ -396,7 +397,7 @@ def computer_turn_expected(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return generate_start_options()
+        return generate_start_option()
     else:
         core_simple_algorithm(round_number)
         expected_value_for_codes = []
@@ -543,7 +544,7 @@ def play_game():
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
 
-computer_vs_computer(True,'heuristic',0.5)
+computer_vs_computer(True, 'heuristic', 0.5)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
