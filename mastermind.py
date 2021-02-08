@@ -559,7 +559,7 @@ def play_game():
         player_vs_computer()
 
 # ---------------------------------------------------------------------------------------------------------------
-
+save_efficiency_charts(5000)
 # verschillende functies die je aan kan roepen:
 
 # het textmenu om een gamemode te kiezen
