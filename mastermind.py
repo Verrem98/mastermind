@@ -476,7 +476,7 @@ def get_avg(limit, mode):
     for _ in range(limit):
         computer_vs_computer(False, mode, 0)
 
-    print(f'avg rounds before win: {sum(rounds) / limit} {mode}')
+    print(f'avg guesses before win: {sum(rounds) / limit} {mode}')
 
     round_catagories = list(set(rounds))
 
@@ -485,11 +485,11 @@ def get_avg(limit, mode):
     height = round_catagories_freq
     bars = round_catagories
 
-    plt.title(f'Frequency of rounds played untill win | "{mode}"', loc='left')
+    plt.title(f'Amount of guesses untill win | "{mode}"', loc='left')
     plt.title(f'avg: {sum(rounds) / limit}', loc='right')
     plt.bar(bars, height)
     plt.ylabel('frequency')
-    plt.xlabel('rounds')
+    plt.xlabel('guesses')
     plt.xticks(bars)
     plt.show()
     plt.close()
