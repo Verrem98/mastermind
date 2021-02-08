@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 options = ['A', 'B', 'C', 'D', 'E', 'F']
 
-#global variabelen die ik in mijn functies gebruik/aanpas
+# global variabelen die ik in mijn functies gebruik/aanpas
 user_picks = []
 code = []
 results = []
@@ -267,7 +267,8 @@ def core_simple_algorithm(round_number):
 
 
 def computer_turn_simple(round_number):
-    """start de eerste gok met [AABB] in ronde 1, pak daarna een random gok uit de lijst met mogelijke gokken'
+    """start de eerste gok met [AABB],[CCDD] of [EEFF] in ronde 1,
+     pak daarna een random gok uit de lijst met mogelijke gokken'
 
                  Args:
                     round_number: wat de huidige ronde in het spel is
@@ -334,8 +335,7 @@ def computer_turn_ahead(round_number):
 
 
 def computer_turn_worst_case(round_number):
-    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft
-     (het grootste aantal [x,y] combinaties)'
+    """kijk voor elke resterende gok welke gok de minst slechte worst case heeft'
 
                Args:
                   round_number: wat de huidige ronde in het spel is
@@ -373,8 +373,7 @@ def computer_turn_worst_case(round_number):
 
 
 def computer_turn_expected(round_number):
-    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft
-     (het grootste aantal [x,y] combinaties)'
+    """kijk voor elke resterende gok welke gok de laagste verwachtingswaarde heeft'
 
                Args:
                   round_number: wat de huidige ronde in het spel is
@@ -521,13 +520,17 @@ def play_game():
 # verschillende functies die je aan kan roepen:
 
 # het textmenu om een gamemode te kiezen
-play_game()
+
+
+# play_game()
 
 
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
-#computer_vs_computer(True,'simple',0)
+
+# computer_vs_computer(True,'simple',0)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
+
 # get_avg(500,'simple')
