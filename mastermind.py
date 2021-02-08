@@ -3,7 +3,9 @@ import time
 import itertools
 import matplotlib.pyplot as plt
 
-options = ['A', 'B', 'C', 'D', 'E', 'F']
+
+# 65 is A in ASCII
+options = [chr(x) for x in range(65, 71)]
 
 # global variabelen die ik in mijn functies gebruik/aanpas
 user_picks = []
@@ -14,10 +16,20 @@ rounds = []
 # de eerste gok in sommige van de algoritmes,
 # ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
 # bij het runnen van duizenden games
-start_options = [['A', 'A', 'B', 'B'], ['C', 'C', 'D', 'D'], ['E', 'E', 'F', 'F']]
+
 
 possible_combinations_static = [list(z) for z in itertools.product('ABCDEF', repeat=4)]
 possible_combinations_mutable = possible_combinations_static.copy()
+
+
+def generate_start_options():
+    rand1 = 0
+    rand2 = 0
+    while rand1 == rand2:
+        rand1 = random.randint(0, len(options)-1)
+        rand2 = random.randint(0, len(options)-1)
+
+    return [options[rand1], options[rand1], options[rand2], options[rand2]]
 
 
 def generate_code():
@@ -172,6 +184,7 @@ def computer_turn_heuristic(round_number):
                             pass
 
         temp_list = []
+
         # als de feedback [0,x] is dan betekent dat dat je voor elke letter zeker weet
         # dat ze niet in de huidige postie horen,
         # ik elimneer hier die opties
@@ -223,7 +236,7 @@ def computer_turn_heuristic(round_number):
 
             possible_combinations_mutable = temp_list
 
-        # van de 4 letters in een gok met [x,y] x+y=z,
+        # van de 4 letters in een gok met [x,y]: x+y=z,
         # mogen er in de volgende gok nooit meer dan z van de 4 letters voorkomen.
         temp_list = []
         if len(possible_combinations_mutable) > 1:
@@ -276,7 +289,7 @@ def computer_turn_simple(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return start_options[random.randint(0, len(start_options)-1)]
+        return generate_start_options()
     else:
         core_simple_algorithm(round_number)
 
@@ -292,7 +305,7 @@ def computer_turn_ahead(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return start_options[random.randint(0, len(start_options)-1)]
+        return generate_start_options()
     else:
         core_simple_algorithm(round_number)
 
@@ -345,7 +358,7 @@ def computer_turn_worst_case(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return start_options[random.randint(0, len(start_options)-1)]
+        return generate_start_options()
     else:
         core_simple_algorithm(round_number)
 
@@ -383,7 +396,7 @@ def computer_turn_expected(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return start_options[random.randint(0, len(start_options)-1)]
+        return generate_start_options()
     else:
         core_simple_algorithm(round_number)
         expected_value_for_codes = []
@@ -530,9 +543,10 @@ def play_game():
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
 
-# computer_vs_computer(True,'simple',0)
+# computer_vs_computer(True,'simple',1)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
 
-# get_avg(500,'simple')
+
+get_avg(500, 'ahead')
