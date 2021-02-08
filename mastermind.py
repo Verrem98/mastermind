@@ -12,9 +12,7 @@ rounds = []
 # 65-71 is A-F in ASCII
 options = [chr(x) for x in range(65, 71)]
 
-# de eerste gok in sommige van de algoritmes,
-# ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
-# bij het runnen van duizenden games
+
 
 possible_combinations_static = [list(z) for z in itertools.product('ABCDEF', repeat=4)]
 possible_combinations_mutable = possible_combinations_static.copy()
@@ -22,6 +20,10 @@ possible_combinations_mutable = possible_combinations_static.copy()
 
 def generate_start_option():
     """maakt de eerste gok aan, een combinatie van [x,x,y,y] waar x en y, A-F kunnen zijn"""
+
+    # de eerste gok in sommige van de algoritmes,
+    # ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
+    # bij het runnen van duizenden games
 
     rand1 = 0
     rand2 = 0
@@ -559,13 +561,13 @@ def play_game():
         player_vs_computer()
 
 # ---------------------------------------------------------------------------------------------------------------
-save_efficiency_charts(5000)
+
 # verschillende functies die je aan kan roepen:
 
 # het textmenu om een gamemode te kiezen
 
 
-# play_game()
+play_game()
 
 
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
