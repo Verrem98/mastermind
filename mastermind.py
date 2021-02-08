@@ -516,14 +516,12 @@ def play_game():
 # verschillende functies die je aan kan roepen:
 
 # het textmenu om een gamemode te kiezen
-
-
 play_game()
 
 
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
-computer_vs_computer(True,'simple',0)
+#computer_vs_computer(True,'simple',0)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
