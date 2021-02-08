@@ -4,17 +4,14 @@ import itertools
 import matplotlib.pyplot as plt
 
 options = ['A', 'B', 'C', 'D', 'E', 'F']
-options_string = 'ABCDEF'
 
 user_picks = []
 code = []
 results = []
-possible_combinations_static = []
 rounds = []
+start_options = [['A', 'A', 'B', 'B'], ['C', 'C', 'D', 'D'], ['E', 'E', 'F', 'F']]
 
-for z in itertools.product(options_string, repeat=4):
-    possible_combinations_static.append(list(z))
-
+possible_combinations_static = [list(z) for z in itertools.product('ABCDEF', repeat=4)]
 possible_combinations_mutable = possible_combinations_static.copy()
 
 
@@ -25,8 +22,10 @@ def generate_code():
 
     code = [options[random.randint(0, len(options) - 1)] for _ in range(4)]
 
+
 def player_turn():
     """returnt de code die de gebruiker wilt gokken"""
+
     while True:
         pick = input().upper()
 
@@ -51,15 +50,13 @@ def check_placement(picks, local_code):
                   picks: de gekozen gok
                   local_code: de code waarme de gok wordt vergeleken
           """
+    # de correcte overige letters op de verkeerde plaats, geen index nodig
+    good_placement = []
+    # de index van de correcte letters op de correcte plaats
+    perfect_placement = [x for x in range(len(picks)) if picks[x] == local_code[x]]
 
-    perfect_placement = []  # de index van de correcte letters op de correcte plaats
-    # heb index nodig voor een list.pop later
-
-    good_placement = []  # de correcte overige letters op de verkeerde plaats, geen index nodig
     picks_copy = picks.copy()
     code_copy = local_code.copy()
-
-    perfect_placement = [x for x in range(len(picks)) if picks[x] == local_code[x]]
 
     for x in range(len(perfect_placement)):
         picks_copy.pop(perfect_placement[x] - x)
@@ -77,7 +74,7 @@ def check_placement(picks, local_code):
 def print_board():
     """print hoeveel pogingen je nog hebt, je feedback, en je gokgeschiedenis in de vorm van een bord"""
 
-    for i in range(10 - len(results)):
+    for _ in range(10 - len(results)):
         for x in range(4):
             print('-', end='')
         print('')
@@ -128,7 +125,6 @@ def player_vs_computer():
         results.append(check_placement(picks, code))
 
 
-# --------------------------------------------------------------------------------------------------------------
 def pick_random_guess():
     """returnt een random guess uit de lijst van mogelijke opties"""
     rand = random.randint(0, len(possible_combinations_mutable) - 1)
@@ -192,7 +188,8 @@ def computer_turn_heuristic(round_number):
             for x in previous_user_pick:
                 previous_user_pick_string += x
 
-            sub_possible_combinations = [i for i in itertools.combinations(previous_user_pick_string, previous_result[0] + previous_result[1])]
+            sub_possible_combinations = [i for i in itertools.combinations(previous_user_pick_string,
+                                                                           previous_result[0] + previous_result[1])]
 
             for i in possible_combinations_mutable:
                 count = 0
@@ -273,7 +270,7 @@ def computer_turn_simple(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return ['A', 'A', 'B', 'B']
+        return start_options[random.randint(0, len(start_options)-1)]
     else:
         core_simple_algorithm(round_number)
 
@@ -289,7 +286,7 @@ def computer_turn_ahead(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return ['A', 'A', 'B', 'B']
+        return start_options[random.randint(0, len(start_options)-1)]
     else:
         core_simple_algorithm(round_number)
 
@@ -341,7 +338,7 @@ def computer_turn_worst_case(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return ['A', 'A', 'B', 'B']
+        return start_options[random.randint(0, len(start_options)-1)]
     else:
         core_simple_algorithm(round_number)
 
@@ -351,7 +348,6 @@ def computer_turn_worst_case(round_number):
         feedback_max_list = []
         for i in possible_combinations_mutable:
             feedback_list = []
-
 
             for j in possible_combinations_mutable:
                 feedback = check_placement(j, i)
@@ -363,10 +359,7 @@ def computer_turn_worst_case(round_number):
 
             feedback_max_list.append([max(possible_feedback_count), i])
 
-        final_guess_list = []
-        for i in feedback_max_list:
-            if i[0] == min(feedback_max_list)[0]:
-                final_guess_list.append(i[1])
+        final_guess_list = [i[1] for i in feedback_max_list if i[0] == min(feedback_max_list)[0]]
 
         guess = final_guess_list[random.randint(0, len(final_guess_list) - 1)]
         possible_combinations_mutable.remove(guess)
@@ -384,7 +377,7 @@ def computer_turn_expected(round_number):
     global possible_combinations_mutable
 
     if round_number == 1:
-        return ['A', 'A', 'B', 'B']
+        return start_options[random.randint(0, len(start_options)-1)]
     else:
         core_simple_algorithm(round_number)
         expected_value_for_codes = []
@@ -480,10 +473,8 @@ def get_avg(limit, mode):
     print(f'avg rounds before win: {sum(rounds) / limit} {mode}')
 
     round_catagories = list(set(rounds))
-    round_catagories_freq = []
 
-    for x in round_catagories:
-        round_catagories_freq.append(rounds.count(x))
+    round_catagories_freq = [rounds.count(x) for x in round_catagories]
 
     height = round_catagories_freq
     bars = round_catagories
@@ -520,21 +511,19 @@ def play_game():
 
         player_vs_computer()
 
-#---------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
 
-#alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
+# verschillende functies die je aan kan roepen:
 
-#verschillende functies die je aan kan roepen:
+# het textmenu om een gamemode te kiezen
 
-#het textmenu om een gamemode te kiezen
-#play_game()
+
+play_game()
 
 
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
-computer_vs_computer(True,'heuristic',0)
+# alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
-#get_avg(500,'simple')
-
-
+# get_avg(500,'simple')
