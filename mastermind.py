@@ -498,16 +498,27 @@ def get_avg(limit, mode):
     height = round_catagories_freq
     bars = round_catagories
 
-    plt.title(f'Number of guesses until win | "{mode}"', loc='left')
-    plt.title(f'avg: {sum(rounds) / limit}', loc='right')
+    label_color = '#52575e'
+    fig, ax = plt.subplots()
+    fig.tight_layout()
+    plt.title(f'Number of guesses until win | "{mode}"', loc='left', color=label_color)
+    plt.title(f'avg: {sum(rounds) / limit}', loc='right', color=label_color)
     plt.bar(bars, height)
-    plt.ylabel('frequency')
-    plt.xlabel('guesses')
+    plt.ylabel('frequency', color=label_color)
+    plt.xlabel('guesses', color=label_color)
     plt.xticks(bars)
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, color='#c5cad1')
+    ax.xaxis.grid(False)
+
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['bottom'].set_color('#c5cad1')
+
     plt.show()
     plt.close()
     reset_rounds()
-
 
 def play_game():
     """toont het gamemode selectie menu in de console"""
@@ -549,4 +560,4 @@ def play_game():
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
 
 
-get_avg(500, 'ahead')
+get_avg(500, 'heuristic')
