@@ -12,18 +12,18 @@ results = []
 possible_combinations_static = []
 rounds = []
 
-for i in itertools.product(options_string, repeat=4):
-    possible_combinations_static.append(list(i))
+for z in itertools.product(options_string, repeat=4):
+    possible_combinations_static.append(list(z))
 
 possible_combinations_mutable = possible_combinations_static.copy()
 
 
 def generate_code():
     """maak een random code aan"""
-    for x in range(4):
-        rand = random.randint(0, len(options) - 1)
-        code.append(options[rand])
 
+    global code
+
+    code = [options[random.randint(0, len(options) - 1)] for _ in range(4)]
 
 def player_turn():
     """returnt de code die de gebruiker wilt gokken"""
@@ -43,13 +43,13 @@ def player_turn():
     return picks
 
 
-def check_placement(picks, code):
+def check_placement(picks, local_code):
     """kijkt welke user picks correct zijn, geef feedback terug in een list in het format:
         [goede_letter_goede_postie,goede_letter_verkeerde_positie]
 
               Args:
                   picks: de gekozen gok
-                  code: de code waarme de gok wordt vergeleken
+                  local_code: de code waarme de gok wordt vergeleken
           """
 
     perfect_placement = []  # de index van de correcte letters op de correcte plaats
@@ -57,11 +57,9 @@ def check_placement(picks, code):
 
     good_placement = []  # de correcte overige letters op de verkeerde plaats, geen index nodig
     picks_copy = picks.copy()
-    code_copy = code.copy()
+    code_copy = local_code.copy()
 
-    for x in range(len(picks)):
-        if picks[x] == code[x]:
-            perfect_placement.append(x)
+    perfect_placement = [x for x in range(len(picks)) if picks[x] == local_code[x]]
 
     for x in range(len(perfect_placement)):
         picks_copy.pop(perfect_placement[x] - x)
@@ -118,11 +116,11 @@ def check_for_end(round_number, prints):
 
 
 def player_vs_computer():
-    'een volledig speler vs computer spel'
+    """een volledig speler vs computer spel"""
 
     round_number = 0
     generate_code()
-    while (check_for_end(round_number, True)):
+    while check_for_end(round_number, True):
         round_number += 1
         print_board()
         picks = player_turn()
@@ -132,7 +130,7 @@ def player_vs_computer():
 
 # --------------------------------------------------------------------------------------------------------------
 def pick_random_guess():
-    'returnt een random guess uit de lijst van mogelijke opties'
+    """returnt een random guess uit de lijst van mogelijke opties"""
     rand = random.randint(0, len(possible_combinations_mutable) - 1)
     guess = possible_combinations_mutable[rand]
     possible_combinations_mutable.remove(guess)
@@ -149,7 +147,7 @@ def computer_turn_heuristic(round_number):
     global possible_combinations_mutable
 
     # eerste gok is random
-    if (round_number == 1):
+    if round_number == 1:
         rand = random.randint(0, len(possible_combinations_mutable) - 1)
         first_pick = possible_combinations_static[rand]
         possible_combinations_mutable.remove(first_pick)
@@ -163,7 +161,7 @@ def computer_turn_heuristic(round_number):
         carry_over = previous_result[0] + previous_result[1]
 
         # als geen van de gegokte getallen voorkomen in de code delete dan alle opties met die getallen
-        if (previous_result[1] == 0 and previous_result[0] == 0):
+        if previous_result[1] == 0 and previous_result[0] == 0:
             for x in set(previous_user_pick):
                 for i in possible_combinations_static:
                     if x in i:
@@ -173,27 +171,28 @@ def computer_turn_heuristic(round_number):
                             pass
 
         temp_list = []
-        # als de feedback [0,x] is dan betekent dat dat je voor elke letter zeker weet dat ze niet in de huidige postie horen, ik elimneer hier die opties
+        # als de feedback [0,x] is dan betekent dat dat je voor elke letter zeker weet
+        # dat ze niet in de huidige postie horen,
+        # ik elimneer hier die opties
         for i in possible_combinations_mutable:
             counter = 0
             for x in range(len(previous_user_pick)):
-                if (previous_user_pick[x] != i[x]):
+                if previous_user_pick[x] != i[x]:
                     counter += 1
             if counter == (4 - previous_result[0]):
                 temp_list.append(i)
         possible_combinations_mutable = temp_list
 
-        # [x,y] x+y = z, split de 4 gokken van de speler in een lijst van lijsten z groot, delete alle opties waar niet tenminste 1 sublijst in voorkomt
+        # [x,y] x+y = z, split de 4 gokken van de speler in een lijst van lijsten z groot,
+        # delete alle opties waar niet tenminste 1 sublijst in voorkomt
 
-        if (4 > carry_over > 0):
+        if 4 > carry_over > 0:
             temp_list = []
             previous_user_pick_string = ''
             for x in previous_user_pick:
                 previous_user_pick_string += x
 
-            sub_possible_combinations = []
-            for i in itertools.combinations(previous_user_pick_string, previous_result[0] + previous_result[1]):
-                sub_possible_combinations.append(list(i))
+            sub_possible_combinations = [i for i in itertools.combinations(previous_user_pick_string, previous_result[0] + previous_result[1])]
 
             for i in possible_combinations_mutable:
                 count = 0
@@ -202,43 +201,44 @@ def computer_turn_heuristic(round_number):
                     for j in x:
                         if j in i:
                             count2 += 1
-                    if (count2 == len(x)):
+                    if count2 == len(x):
                         count += 1
-                if (count > 0):
+                if count > 0:
                     temp_list.append(i)
 
             possible_combinations_mutable = temp_list
 
         # als alle letters in de code voorkomen maar nog niet op de goede plek staan, delete dan alle andere opties
-        if (previous_result[0] + previous_result[1] == 4):
+        if previous_result[0] + previous_result[1] == 4:
             temp_list = []
             for i in range(0, len(possible_combinations_mutable)):
                 count = 0
                 for x in previous_user_pick:
-                    if (previous_user_pick.count(x) == possible_combinations_mutable[i].count(x)):
+                    if previous_user_pick.count(x) == possible_combinations_mutable[i].count(x):
                         count += 1
                 if count == 4:
                     temp_list.append(possible_combinations_mutable[i])
 
             possible_combinations_mutable = temp_list
 
-        # van de 4 letters in een gok met [x,y] x+y=z, mogen er in de volgende gok nooit meer dan z van de 4 letters voorkomen.
+        # van de 4 letters in een gok met [x,y] x+y=z,
+        # mogen er in de volgende gok nooit meer dan z van de 4 letters voorkomen.
         temp_list = []
-        if (len(possible_combinations_mutable) > 1):
-            if ((carry_over == 1 or carry_over == 2 or carry_over == 3) and len(set(previous_user_pick)) > 2):
+        if len(possible_combinations_mutable) > 1:
+            if (carry_over == 1 or carry_over == 2 or carry_over == 3) and len(set(previous_user_pick)) > 2:
 
                 previous_user_pick_copy = previous_user_pick.copy()
                 for x in previous_user_pick_copy:
-                    if (previous_user_pick.count(x) > 1):
+                    if previous_user_pick.count(x) > 1:
                         previous_user_pick_copy.remove(x)
 
                 for i in possible_combinations_mutable:
                     count = 0
-                    if (len(set(i)) == 4):
+                    if len(set(i)) == 4:
                         for x in previous_user_pick_copy:
-                            if (x in i):
+                            if x in i:
                                 count += 1
-                    if (count <= carry_over):
+                    if count <= carry_over:
                         temp_list.append(i)
                 possible_combinations_mutable = temp_list
 
@@ -246,12 +246,12 @@ def computer_turn_heuristic(round_number):
 
 
 def core_simple_algorithm(round_number):
-    """kijk voor elke resterende gok in possible_options_copy welke gokkken consistent zijn met voorgaande gokken, pas de lijst met mogelijke gokken aan'
+    """kijk voor elke resterende gok in possible_options_copy welke gokkken consistent zijn met voorgaande gokken,
+     pas de lijst met mogelijke gokken aan'
 
                     Args:
                        round_number: wat de huidige ronde in het spel is
             """
-
 
     global possible_combinations_mutable
     previous_result = results[round_number - 2]
@@ -272,7 +272,7 @@ def computer_turn_simple(round_number):
          """
     global possible_combinations_mutable
 
-    if (round_number == 1):
+    if round_number == 1:
         return ['A', 'A', 'B', 'B']
     else:
         core_simple_algorithm(round_number)
@@ -280,15 +280,15 @@ def computer_turn_simple(round_number):
         return pick_random_guess()
 
 
-
 def computer_turn_ahead(round_number):
-    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft
+       (het grootste aantal [x,y] combinaties)'
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
     global possible_combinations_mutable
 
-    if (round_number == 1):
+    if round_number == 1:
         return ['A', 'A', 'B', 'B']
     else:
         core_simple_algorithm(round_number)
@@ -303,18 +303,20 @@ def computer_turn_ahead(round_number):
             for j in possible_combinations_mutable:
                 feedback = check_placement(j, i)
 
-                if (feedback in possible_feedback):
+                if feedback in possible_feedback:
                     feedback_list.append(feedback)
                     possible_feedback.remove(feedback)
 
-                    # als de feedback list 12/12 lang is betekent dat dat het een optimale gok is, je hoeft daarna dus niet verder te kijken
+                    # als de feedback list 12/12 lang is betekent dat dat het een optimale gok is,
+                    # je hoeft daarna dus niet verder te kijken
                     # dit versnelt het algorithme enorm
-                    if (len(feedback_list) == 12):
+
+                    if len(feedback_list) == 12:
                         guess = i
                         possible_combinations_mutable.remove(guess)
                         return guess
 
-            if (len(feedback_list) >= highest):
+            if len(feedback_list) >= highest:
                 feedback_length_list.append([len(feedback_list), i])
                 highest = len(feedback_list)
 
@@ -330,23 +332,26 @@ def computer_turn_ahead(round_number):
 
 
 def computer_turn_worst_case(round_number):
-    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft
+     (het grootste aantal [x,y] combinaties)'
 
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
     global possible_combinations_mutable
 
-    if (round_number == 1):
+    if round_number == 1:
         return ['A', 'A', 'B', 'B']
     else:
         core_simple_algorithm(round_number)
 
+        possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
+                             [3, 0]]
+
         feedback_max_list = []
         for i in possible_combinations_mutable:
             feedback_list = []
-            possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
-                                 [3, 0]]
+
 
             for j in possible_combinations_mutable:
                 feedback = check_placement(j, i)
@@ -356,36 +361,38 @@ def computer_turn_worst_case(round_number):
             for x in possible_feedback:
                 possible_feedback_count.append(feedback_list.count(x))
 
-            feedback_max_list.append([max(possible_feedback_count),i])
+            feedback_max_list.append([max(possible_feedback_count), i])
 
         final_guess_list = []
         for i in feedback_max_list:
             if i[0] == min(feedback_max_list)[0]:
                 final_guess_list.append(i[1])
 
-        guess = final_guess_list[random.randint(0,len(final_guess_list)-1)]
+        guess = final_guess_list[random.randint(0, len(final_guess_list) - 1)]
         possible_combinations_mutable.remove(guess)
 
     return guess
 
 
 def computer_turn_expected(round_number):
-    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft (het grootste aantal [x,y] combinaties)'
+    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft
+     (het grootste aantal [x,y] combinaties)'
 
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
     global possible_combinations_mutable
 
-    if (round_number == 1):
+    if round_number == 1:
         return ['A', 'A', 'B', 'B']
     else:
         core_simple_algorithm(round_number)
         expected_value_for_codes = []
+        possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
+                             [3, 0], [4, 0]]
+
         for i in possible_combinations_mutable:
             feedback_list = []
-            possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
-                                 [3, 0],[4,0]]
 
             for x in possible_combinations_mutable:
                 feedback = check_placement(x, i)
@@ -397,13 +404,14 @@ def computer_turn_expected(round_number):
 
             expected_value = 0
             for x in possible_feedback_count:
-                expected_value += x**2/(sum(possible_feedback_count))
-            expected_value_for_codes.append([expected_value,i])
+                expected_value += x ** 2 / (sum(possible_feedback_count))
+            expected_value_for_codes.append([expected_value, i])
 
         guess = (min(expected_value_for_codes)[1])
         possible_combinations_mutable.remove(guess)
 
     return guess
+
 
 def computer_vs_computer(prints, mode, sleep):
     """een volledig computer vs computer spel
@@ -416,22 +424,21 @@ def computer_vs_computer(prints, mode, sleep):
     picks = user_picks
     generate_code()
     round_number = 0
-    while (check_for_end(round_number, prints)):
+    while check_for_end(round_number, prints):
         round_number += 1
-        if (prints):
+        if prints:
             print_board()
             print()
-        if (mode == 'ahead'):
+        if mode == 'ahead':
             picks = computer_turn_ahead(round_number)
-        if (mode == 'heuristic'):
+        if mode == 'heuristic':
             picks = computer_turn_heuristic(round_number)
-        if (mode == 'simple'):
+        if mode == 'simple':
             picks = computer_turn_simple(round_number)
-        if (mode == 'worst_case'):
+        if mode == 'worst_case':
             picks = computer_turn_worst_case(round_number)
-        if (mode == 'expected'):
+        if mode == 'expected':
             picks = computer_turn_expected(round_number)
-
 
         user_picks.append(picks)
         results.append(check_placement(picks, code))
@@ -440,14 +447,12 @@ def computer_vs_computer(prints, mode, sleep):
 
 
 def reset():
-    'gebruik geen classes/constructor dus moet mijn lists resetten'
+    """gebruik geen classes/constructor dus moet mijn lists resetten"""
     global code
     global user_picks
     global results
     global possible_combinations_mutable
     global possible_combinations_static
-    global previous_user_pick
-    previous_user_pick = []
     user_picks = []
     results = []
     possible_combinations_mutable = possible_combinations_static.copy()
@@ -455,7 +460,7 @@ def reset():
 
 
 def reset_rounds():
-    'resets the list that tracks the rounds'
+    """resets the list that tracks the rounds"""
     global rounds
     rounds = []
 
@@ -470,7 +475,7 @@ def get_avg(limit, mode):
     """
     reset()
     for x in range(limit):
-        computer_vs_computer(False, mode,0)
+        computer_vs_computer(False, mode, 0)
 
     print(f'avg rounds before win: {sum(rounds) / limit} {mode}')
 
@@ -495,24 +500,41 @@ def get_avg(limit, mode):
 
 
 def play_game():
+    """toont het gamemode selectie menu in de console"""
+
     mode_choices = ['computer vs computer', 'player vs computer']
 
-    while(True):
+    while True:
         user_input = input("Do you want to play 'computer vs computer' or 'player vs computer'\n")
-        if(user_input in mode_choices):
+        if user_input in mode_choices:
             break
-    if(user_input == 'computer vs computer'):
-        computer_mode_choices = ['heuristic','simple','ahead']
-        while(True):
-            user_input = input("pick computer mode: 'heuristic','simple,'ahead'\n")
-            if(user_input in computer_mode_choices):
+    if user_input == 'computer vs computer':
+        computer_mode_choices = ['heuristic', 'simple', 'ahead', 'worst_case', 'expected']
+        while True:
+            user_input = input(f"pick computer mode: {computer_mode_choices}'\n")
+            if user_input in computer_mode_choices:
                 break
-        computer_vs_computer(True, user_input,1)
+        computer_vs_computer(True, user_input, 1)
 
-    elif(user_input == 'player vs computer'):
+    elif user_input == 'player vs computer':
 
         player_vs_computer()
 
-# ---------------------------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------
 
-computer_vs_computer(True,'ahead',0)
+#alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
+
+#verschillende functies die je aan kan roepen:
+
+#het textmenu om een gamemode te kiezen
+#play_game()
+
+
+# een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
+computer_vs_computer(True,'heuristic',0)
+
+# om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
+# Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
+#get_avg(500,'simple')
+
+
