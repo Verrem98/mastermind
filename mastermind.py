@@ -300,6 +300,8 @@ def computer_turn_ahead(round_number):
         highest = 0
         for i in possible_combinations_mutable:
             feedback_list = []
+
+            # deze possible_feedback staat binnen de loop omdat het aangepast wordt en dan gereset moet worden
             possible_feedback = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 1], [1, 2], [1, 3], [2, 0], [2, 1], [2, 2],
                                  [3, 0]]
 
