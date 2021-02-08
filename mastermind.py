@@ -5,10 +5,15 @@ import matplotlib.pyplot as plt
 
 options = ['A', 'B', 'C', 'D', 'E', 'F']
 
+#global variabelen die ik in mijn functies gebruik/aanpas
 user_picks = []
 code = []
 results = []
 rounds = []
+
+# de eerste gok in sommige van de algoritmes,
+# ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
+# bij het runnen van duizenden games
 start_options = [['A', 'A', 'B', 'B'], ['C', 'C', 'D', 'D'], ['E', 'E', 'F', 'F']]
 
 possible_combinations_static = [list(z) for z in itertools.product('ABCDEF', repeat=4)]
