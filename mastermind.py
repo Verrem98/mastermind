@@ -3,7 +3,7 @@ import time
 import itertools
 import matplotlib.pyplot as plt
 
-# global variabelen die ik in mijn functies gebruik/aanpas
+# variabelen die ik in meerdere van mijn functies gebruik/aanpas
 user_picks = []
 code = []
 results = []
@@ -477,12 +477,13 @@ def reset_rounds():
     rounds = []
 
 
-def get_avg(limit, mode):
+def get_avg(limit, mode, save):
     """ geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
 
             Args:
-                limit: hoe vaak je een volledige game rotatie aanroept voordat je het gemiddelde berekent
+                limit: hoe vaak je een volledige game rotatie aanroept
                 mode: van welk bot algorithme het gemiddelde moet worden berekend
+                save: boolean, of je de image op wilt slaan of niet
 
     """
     reset()
@@ -504,8 +505,8 @@ def get_avg(limit, mode):
     plt.title(f'Number of guesses until win | "{mode}"', loc='left', color=label_color)
     plt.title(f'avg: {sum(rounds) / limit}', loc='right', color=label_color)
     plt.bar(bars, height)
-    plt.ylabel('frequency', color=label_color)
-    plt.xlabel('guesses', color=label_color)
+    plt.ylabel('Frequency', color=label_color)
+    plt.xlabel('Guesses', color=label_color)
     plt.xticks(bars)
     ax.set_axisbelow(True)
     ax.yaxis.grid(True, color='#c5cad1')
@@ -517,8 +518,24 @@ def get_avg(limit, mode):
     ax.spines['bottom'].set_color('#c5cad1')
 
     plt.show()
+    if save:
+        fig.savefig(f"efficiency charts/{mode}-algorithm_chart.png")
     plt.close()
     reset_rounds()
+
+
+def save_efficiency_charts(limit):
+    """maakt een efficiëntie chart voor elk algoritme en slaat deze op
+
+            Args:
+                limit: hoe vaak je een volledige game rotatie aanroept
+    """
+
+    algorithms = ['heuristic', 'simple', 'ahead', 'worst_case', 'expected']
+
+    for x in algorithms:
+        get_avg(limit, x, True)
+
 
 def play_game():
     """toont het gamemode selectie menu in de console"""
@@ -558,6 +575,4 @@ def play_game():
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
-
-
-get_avg(500, 'heuristic')
+# get_avg(500, 'heuristic', True)
