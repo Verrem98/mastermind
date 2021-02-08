@@ -3,15 +3,14 @@ import time
 import itertools
 import matplotlib.pyplot as plt
 
-
-# 65-71 is A-F in ASCII
-options = [chr(x) for x in range(65, 71)]
-
 # global variabelen die ik in mijn functies gebruik/aanpas
 user_picks = []
 code = []
 results = []
 rounds = []
+
+# 65-71 is A-F in ASCII
+options = [chr(x) for x in range(65, 71)]
 
 # de eerste gok in sommige van de algoritmes,
 # ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
