@@ -498,7 +498,7 @@ def get_avg(limit, mode):
     height = round_catagories_freq
     bars = round_catagories
 
-    plt.title(f'Amount of guesses untill win | "{mode}"', loc='left')
+    plt.title(f'Number of guesses until win | "{mode}"', loc='left')
     plt.title(f'avg: {sum(rounds) / limit}', loc='right')
     plt.bar(bars, height)
     plt.ylabel('frequency')
@@ -543,10 +543,10 @@ def play_game():
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
 
-computer_vs_computer(True, 'heuristic', 0.5)
+# computer_vs_computer(True, 'heuristic', 0.5)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
 
 
-# get_avg(500, 'ahead')
+get_avg(500, 'ahead')
