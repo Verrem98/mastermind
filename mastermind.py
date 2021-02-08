@@ -471,7 +471,7 @@ def get_avg(limit, mode):
 
     """
     reset()
-    for x in range(limit):
+    for _ in range(limit):
         computer_vs_computer(False, mode, 0)
 
     print(f'avg rounds before win: {sum(rounds) / limit} {mode}')
