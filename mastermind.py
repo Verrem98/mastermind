@@ -12,18 +12,16 @@ rounds = []
 # 65-71 is A-F in ASCII
 options = [chr(x) for x in range(65, 71)]
 
-
-
 possible_combinations_static = [list(z) for z in itertools.product('ABCDEF', repeat=4)]
 possible_combinations_mutable = possible_combinations_static.copy()
 
 
 def generate_start_option():
-    """maakt de eerste gok aan, een combinatie van [x,x,y,y] waar x en y, A-F kunnen zijn"""
+    """maakt de eerste gok aan, een combinatie van [x,x,y,y] waar x en y, A t/m F kunnen zijn"""
 
-    # de eerste gok in sommige van de algoritmes,
-    # ik heb er meerdere om te voorkomen vast te zitten op één inefficiënte start beurt
-    # bij het runnen van duizenden games
+    #  Als ik alleen maar met AABB start dan lost die,bijvoorbeeld, code CCCC altijd binnen
+    #  x aantal moves op, door ook andere begin gokken toe te voegen wordt daar varandering
+    # in aangebracht wat voor een beter gemiddelde zorgt.
 
     rand1 = 0
     rand2 = 0
@@ -146,6 +144,7 @@ def player_vs_computer():
 
 def pick_random_guess():
     """returnt een random guess uit de lijst van mogelijke opties"""
+
     rand = random.randint(0, len(possible_combinations_mutable) - 1)
     guess = possible_combinations_mutable[rand]
     possible_combinations_mutable.remove(guess)
@@ -462,6 +461,7 @@ def computer_vs_computer(prints, mode, sleep):
 
 def reset():
     """gebruik geen classes/constructor dus moet mijn lists resetten"""
+
     global code
     global user_picks
     global results
@@ -475,6 +475,7 @@ def reset():
 
 def reset_rounds():
     """resets the list that tracks the rounds"""
+
     global rounds
     rounds = []
 
@@ -483,7 +484,7 @@ def get_avg(limit, mode, save):
     """ geeft terug wat de gemiddelde ronde-duur is van elk spel, maakt ook een grafiek'
 
             Args:
-                limit: hoe vaak je een volledige game rotatie aanroept
+                limit: hoe vaak je een volledige spel aanroept
                 mode: van welk bot algorithme het gemiddelde moet worden berekend
                 save: boolean, of je de image op wilt slaan of niet
 
@@ -530,7 +531,7 @@ def save_efficiency_charts(limit):
     """maakt een efficiëntie chart voor elk algoritme en slaat deze op
 
             Args:
-                limit: hoe vaak je een volledige game rotatie aanroept
+                limit: hoe vaak je een volledig spel aanroept
     """
 
     algorithms = ['heuristic', 'simple', 'ahead', 'worst_case', 'expected']
