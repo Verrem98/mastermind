@@ -4,7 +4,7 @@ import itertools
 import matplotlib.pyplot as plt
 
 
-# 65 is A in ASCII
+# 65-71 is A-F in ASCII
 options = [chr(x) for x in range(65, 71)]
 
 # global variabelen die ik in mijn functies gebruik/aanpas
@@ -543,10 +543,10 @@ def play_game():
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
 
-# computer_vs_computer(True,'simple',1)
+computer_vs_computer(True,'heuristic',0.5)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
 
 
-get_avg(500, 'ahead')
+# get_avg(500, 'ahead')
