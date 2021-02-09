@@ -304,7 +304,8 @@ def computer_turn_simple(round_number):
 
 def computer_turn_ahead(round_number):
     """kijkt voor elke resterende gok welke gok het grootste aantal [x,y] combinaties aan mogelijke feedback kan geven,
-    dit was een 'misinterpetatie' van 2.2 in het artikel van de Universiteit van Groningen, maar werkt het beste van alle algoritmen
+    dit was een 'misinterpetatie' van 2.2 in het artikel van de Universiteit van Groningen,
+     maar werkt het beste van alle algoritmen
     die ik heb geïmplementeerd (relatief snel met het laagste aantal gemiddelde vragen voor een win).
     
                Args:
@@ -431,7 +432,6 @@ def computer_turn_expected(round_number):
         possible_combinations_mutable.remove(guess)
 
     return guess
-
 
 
 # =================================================================================================================
