@@ -152,6 +152,11 @@ def pick_random_guess():
     return guess
 
 
+# =================================================================================================================
+# 5 Verschillende algoritmes:
+# =================================================================================================================
+
+
 def computer_turn_heuristic(round_number):
     """dit algorithme elimineert 'onmogelijke gokken' uit een lijst van mogelijke gokken op verschillende manieren'
 
@@ -298,8 +303,10 @@ def computer_turn_simple(round_number):
 
 
 def computer_turn_ahead(round_number):
-    """kijkt voor elke resterende gok welke gok de meest waardevolle feedback geeft
-       (het grootste aantal [x,y] combinaties)'
+    """kijkt voor elke resterende gok welke gok het grootste aantal [x,y] combinaties aan mogelijke feedback kan geven,
+    dit was een 'misinterpetatie' van 2.2 in het artikel van de Universiteit van Groningen, maar werkt het beste van alle algoritmen
+    die ik heb geïmplementeerd (relatief snel met het laagste aantal gemiddelde vragen voor een win).
+    
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
@@ -425,6 +432,11 @@ def computer_turn_expected(round_number):
 
     return guess
 
+
+
+# =================================================================================================================
+
+# =================================================================================================================
 
 def computer_vs_computer(prints, mode, sleep):
     """een volledig computer vs computer spel
