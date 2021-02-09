@@ -262,7 +262,7 @@ def computer_turn_heuristic(round_number):
 
 
 def core_simple_algorithm(round_number):
-    """kijk voor elke resterende gok in possible_options_copy welke gokkken consistent zijn met voorgaande gokken,
+    """kijk voor elke resterende gok in possible_options_mutable welke gokkken consistent zijn met voorgaande gokken,
      pas de lijst met mogelijke gokken aan'
 
                     Args:
