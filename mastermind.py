@@ -61,7 +61,7 @@ def player_turn():
 
 def check_placement(picks, local_code):
     """kijkt welke user picks correct zijn, geef feedback terug in een list in het format:
-        [goede_letter_goede_postie,goede_letter_verkeerde_positie]
+    [goede_letter_goede_postie,goede_letter_verkeerde_positie]
 
               Args:
                   picks: de gekozen gok
@@ -268,7 +268,10 @@ def computer_turn_heuristic(round_number):
 
 def core_simple_algorithm(round_number):
     """kijk voor elke resterende gok in possible_options_mutable welke gokkken consistent zijn met voorgaande gokken,
-     pas de lijst met mogelijke gokken aan'
+    pas de lijst met mogelijke gokken aan'
+
+    gebaseerd op 2.1 in het artikel van de Universiteit van Groningen
+
 
                     Args:
                        round_number: wat de huidige ronde in het spel is
@@ -287,7 +290,9 @@ def core_simple_algorithm(round_number):
 
 def computer_turn_simple(round_number):
     """start de eerste gok met [AABB],[CCDD] of [EEFF] in ronde 1,
-     pak daarna een random gok uit de lijst met mogelijke gokken'
+     pak daarna een random gok uit de lijst met mogelijke gokken.
+
+     gebaseerd op 2.1 (A Simple Strategy )in het artikel van de Universiteit van Groningen
 
                  Args:
                     round_number: wat de huidige ronde in het spel is
@@ -303,9 +308,10 @@ def computer_turn_simple(round_number):
 
 
 def computer_turn_ahead(round_number):
-    """kijkt voor elke resterende gok welke gok het grootste aantal [x,y] combinaties aan mogelijke feedback kan geven,
+    """kijkt voor elke resterende gok welke gok het grootste aantal [x,y] combinaties aan mogelijke feedback kan geven
+
     dit was een 'misinterpetatie' van 2.2 in het artikel van de Universiteit van Groningen,
-     maar werkt het beste van alle algoritmen
+    maar werkt het beste van alle algoritmen
     die ik heb geïmplementeerd (relatief snel met het laagste aantal gemiddelde vragen voor een win).
     
                Args:
@@ -361,6 +367,9 @@ def computer_turn_ahead(round_number):
 def computer_turn_worst_case(round_number):
     """kijk voor elke resterende gok welke gok de minst slechte worst case heeft'
 
+    gebaseerd op 2.3(A Worst Case Strategy) in het artikel van de Universiteit van Groningen
+
+
                Args:
                   round_number: wat de huidige ronde in het spel is
        """
@@ -398,6 +407,9 @@ def computer_turn_worst_case(round_number):
 
 def computer_turn_expected(round_number):
     """kijk voor elke resterende gok welke gok de laagste verwachtingswaarde heeft'
+
+    gebaseerd op 2.4(An Expected Size Strategy) in het artikel van de Universiteit van Groningen
+
 
                Args:
                   round_number: wat de huidige ronde in het spel is
