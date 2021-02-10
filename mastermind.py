@@ -282,7 +282,7 @@ def core_simple_algorithm(round_number):
     for i in possible_combinations_mutable:
         if (check_placement(i, previous_user_pick)) == previous_result:
             temp_list.append(i)
-        possible_combinations_mutable = temp_list
+    possible_combinations_mutable = temp_list
 
 
 def computer_turn_simple(round_number):
