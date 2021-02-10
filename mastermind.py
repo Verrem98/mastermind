@@ -299,7 +299,7 @@ def computer_turn_simple(round_number):
     else:
         core_simple_algorithm(round_number)
 
-        return pick_random_guess()
+        return possible_combinations_mutable[0]
 
 
 def computer_turn_ahead(round_number):
