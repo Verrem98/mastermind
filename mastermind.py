@@ -40,10 +40,11 @@ def generate_code():
     code = [options[random.randint(0, len(options) - 1)] for _ in range(4)]
 
 
-def player_turn():
+def get_player_input():
     """returnt de code die de gebruiker wilt gokken"""
 
     while True:
+        print('Please enter your code')
         pick = input().upper()
 
         picks = (list(pick))
@@ -137,7 +138,7 @@ def player_vs_computer():
     while check_for_end(round_number, True):
         round_number += 1
         print_board()
-        picks = player_turn()
+        picks = get_player_input()
         user_picks.append(picks)
         results.append(check_placement(picks, code))
 
@@ -450,16 +451,21 @@ def computer_turn_expected(round_number):
 
 # =================================================================================================================
 
-def computer_vs_computer(prints, mode, sleep):
+def computer_vs_computer(prints, mode, sleep, code_generate):
     """een volledig computer vs computer spel
 
         Args:
+
             prints: of het speelbord wel of niet geprint moet worden
             mode: het soort algorithme dat de bot gebruikt
             sleep: de tijd(s) de bot wacht tussen turns
+            code_generate: of er wel of niet een code gegenereerd moet worden
     """
+
     picks = user_picks
-    generate_code()
+
+    if code_generate:
+        generate_code()
     round_number = 0
     while check_for_end(round_number, prints):
         round_number += 1
@@ -515,7 +521,7 @@ def get_avg(limit, mode, save):
     """
     reset()
     for _ in range(limit):
-        computer_vs_computer(False, mode, 0)
+        computer_vs_computer(False, mode, 0, True)
 
     print(f'avg guesses before win: {sum(rounds) / limit} {mode}')
 
@@ -567,22 +573,29 @@ def save_efficiency_charts(limit):
 def play_game():
     """toont het gamemode selectie menu in de console"""
 
-    mode_choices = ['computer vs computer', 'player vs computer']
+    mode_choices = ['computer vs computer', 'player vs computer', 'computer vs player']
 
     while True:
-        user_input = input("Do you want to play 'computer vs computer' or 'player vs computer'\n")
+        user_input = input("Do you want to play 'computer vs computer' or 'player vs computer' "
+                           "or 'computer vs player'\n")
         if user_input in mode_choices:
             break
-    if user_input == 'computer vs computer':
+    if user_input == 'computer vs computer' or user_input == 'computer vs player':
         computer_mode_choices = ['heuristic', 'simple', 'ahead', 'worst_case', 'expected']
         while True:
-            user_input = input(f"pick computer mode: {computer_mode_choices}'\n")
-            if user_input in computer_mode_choices:
+            user_input_2 = input(f"pick computer mode: {computer_mode_choices}'\n")
+            if user_input_2 in computer_mode_choices:
                 break
-        computer_vs_computer(True, user_input, 1)
+
+        if user_input == 'computer vs computer':
+            computer_vs_computer(True, user_input_2, 1, True)
+
+        elif user_input == 'computer vs player':
+            global code
+            code = get_player_input()
+            computer_vs_computer(True, user_input_2, 1, False)
 
     elif user_input == 'player vs computer':
-
         player_vs_computer()
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -598,8 +611,8 @@ play_game()
 # een directe computer vs computer match, waar je aangeeft welk algoritme de computer moet gebruiken
 # alle bot algoritmes: 'heuristic', 'simple', 'ahead', 'worst_case', 'expected'
 
-# computer_vs_computer(True, 'heuristic', 0.5)
+# computer_vs_computer(True, 'heuristic', 0.5, True)
 
 # om te testen hoe efficiënt de algoritmes zijn, kan je deze functie aangroepen.
 # Het genereert een diagram die toont na hoeveel rondes een game wordt gewonnen na x games gespeelt
-# get_avg(500, 'heuristic', True)
+# get_avg(500, 'heuristic', False)
