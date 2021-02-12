@@ -462,8 +462,6 @@ def computer_vs_computer(prints, mode, sleep, code_generate):
             code_generate: of er wel of niet een code gegenereerd moet worden
     """
 
-    picks = user_picks
-
     if code_generate:
         generate_code()
     round_number = 0
@@ -472,16 +470,8 @@ def computer_vs_computer(prints, mode, sleep, code_generate):
         if prints:
             print_board()
             print()
-        if mode == 'ahead':
-            picks = computer_turn_ahead(round_number)
-        if mode == 'heuristic':
-            picks = computer_turn_heuristic(round_number)
-        if mode == 'simple':
-            picks = computer_turn_simple(round_number)
-        if mode == 'worst_case':
-            picks = computer_turn_worst_case(round_number)
-        if mode == 'expected':
-            picks = computer_turn_expected(round_number)
+
+        picks = eval(f"computer_turn_{mode}(round_number)")
 
         user_picks.append(picks)
         results.append(check_placement(picks, code))
@@ -525,12 +515,12 @@ def get_avg(limit, mode, save):
 
     print(f'avg guesses before win: {sum(rounds) / limit} {mode}')
 
-    round_catagories = list(set(rounds))
+    round_categories = list(set(rounds))
 
-    round_catagories_freq = [rounds.count(x) for x in round_catagories]
+    round_categories_freq = [rounds.count(x) for x in round_categories]
 
-    height = round_catagories_freq
-    bars = round_catagories
+    height = round_categories_freq
+    bars = round_categories
 
     label_color = '#52575e'
     fig, ax = plt.subplots()
